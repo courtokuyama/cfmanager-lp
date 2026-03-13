@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFManager サービス資料</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff; --bg-alt: #f5f6f8; --bg-dark: #1a1e2e;
+    --text: #1e2330; --text-sub: #555e6e; --text-light: #8891a0;
+    --accent: #2563eb; --accent-light: #eef2ff; --accent-dark: #1a4fcc;
+    --border: #e5e7eb; --green: #0d9f6e; --red: #dc3545; --yellow: #d9880b;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',-apple-system,sans-serif;background:#e5e7eb;color:var(--text);line-height:1.8;font-size:14px;-webkit-font-smoothing:antialiased}
+  .slide{width:1280px;height:720px;margin:32px auto;background:var(--bg);box-shadow:0 4px 24px rgba(0,0,0,.08);border-radius:4px;overflow:hidden;position:relative;page-break-after:always}
+  .slide-inner{padding:52px 72px;height:720px;display:flex;flex-direction:column}
+  .page-num{position:absolute;bottom:20px;right:40px;font-size:11px;color:var(--text-light);font-weight:500}
+  .slide-logo{position:absolute;bottom:20px;left:40px;font-size:13px;font-weight:700;color:var(--text-light)}
+  .slide-logo span:first-child{color:var(--accent)}
+  .cover{background:var(--bg-dark);color:#fff;display:grid;grid-template-columns:1fr 1fr;height:720px;overflow:hidden;position:relative}
+  .cover::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.15) 0%,transparent 70%);border-radius:50%;z-index:0}
+  .cover-left{padding:72px 48px 72px 72px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+  .cover-right{display:flex;align-items:center;justify-content:center;padding:48px 48px 48px 0;position:relative;z-index:1}
+  .cover-logo{font-size:24px;font-weight:800;margin-bottom:32px}
+  .cover-logo span:first-child{color:var(--accent)}
+  .cover-label{font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .cover h1{font-size:36px;font-weight:800;line-height:1.4;letter-spacing:-.5px;margin-bottom:20px}
+  .cover-sub{font-size:14px;color:rgba(255,255,255,.55);line-height:1.9}
+  .cover-footer{position:absolute;bottom:28px;left:72px;font-size:11px;color:rgba(255,255,255,.25);z-index:1}
+  .cover-dashboard{background:var(--bg-dark);border-radius:12px;overflow:hidden;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08)}
+  .dash-header{background:#151929;border-bottom:1px solid rgba(255,255,255,.08);padding:10px 14px;display:flex;align-items:center;gap:10px}
+  .dash-dots{display:flex;gap:5px}
+  .dash-dots span{width:8px;height:8px;border-radius:50%}
+  .dash-dots span:nth-child(1){background:#ff5f57}
+  .dash-dots span:nth-child(2){background:#febc2e}
+  .dash-dots span:nth-child(3){background:#28c840}
+  .dash-title-bar{flex:1;background:rgba(255,255,255,.06);border-radius:6px;height:24px;display:flex;align-items:center;padding:0 12px;font-size:10px;color:rgba(255,255,255,.35)}
+  .dash-body{padding:14px}
+  .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+  .kpi-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px}
+  .kpi-label{font-size:9px;color:rgba(255,255,255,.4);margin-bottom:2px}
+  .kpi-value{font-size:14px;font-weight:700;color:#fff}
+  .kpi-badge{display:inline-block;font-size:8px;padding:1px 5px;border-radius:4px;margin-top:2px;font-weight:600}
+  .kpi-badge.up{background:rgba(13,159,110,.15);color:#34d399}
+  .kpi-badge.down{background:rgba(220,53,69,.15);color:#f87171}
+  .chart-area{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;margin-bottom:8px;height:72px;overflow:hidden}
+  .chart-label{font-size:9px;color:rgba(255,255,255,.35);margin-bottom:6px}
+  .chart-bars{display:flex;align-items:flex-end;gap:4px;height:36px}
+  .chart-bar{flex:1;border-radius:3px 3px 0 0;background:var(--accent);opacity:.4}
+  .chart-bar:last-child{opacity:1}
+  .sec-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .sec-title{font-size:28px;font-weight:800;line-height:1.4;margin-bottom:28px;letter-spacing:-.3px}
+  .sec-title-sm{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:20px}
+  .toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px;list-style:none;margin-top:8px}
+  .toc-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px;font-weight:500}
+  .toc-num{width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .toc-page{margin-left:auto;color:var(--text-light);font-size:12px}
+  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+  .market-card{background:var(--bg-alt);border-radius:12px;padding:24px;display:flex;flex-direction:column}
+  .market-card .m-stat{font-size:44px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:6px}
+  .market-card .m-stat-unit{font-size:18px;font-weight:700}
+  .market-card .m-title{font-size:14px;font-weight:700;margin-bottom:6px}
+  .market-card .m-desc{font-size:11px;color:var(--text-sub);line-height:1.7;flex:1}
+  .market-card .m-source{font-size:10px;color:var(--text-light);margin-top:8px}
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}
+  .problem-card{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:24px;display:flex;gap:14px;align-items:flex-start}
+  .problem-icon{width:36px;height:36px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .problem-card h4{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--text)}
+  .problem-card p{font-size:12px;color:var(--text-sub);line-height:1.7}
+  .ba-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;flex:1}
+  .ba-col{border-radius:12px;padding:28px 24px}
+  .ba-before{background:#fef2f2;border:1px solid #fecaca}
+  .ba-after{background:var(--accent-light);border:1px solid #c7d2fe}
+  .ba-col-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+  .ba-before .ba-col-label{color:var(--red)}
+  .ba-after .ba-col-label{color:var(--accent)}
+  .ba-col h4{font-size:15px;font-weight:700;margin-bottom:12px}
+  .ba-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:var(--text-sub)}
+  .ba-item-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ba-before .ba-item-icon{background:#fee2e2}
+  .ba-after .ba-item-icon{background:#dbeafe}
+  .ba-arrow-col{display:flex;align-items:center;justify-content:center;padding:0 20px}
+  /* features overview */
+  .feat-overview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex:1}
+  .feat-ov-card{border:1px solid var(--border);border-radius:14px;padding:24px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .feat-ov-card .fov-num{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px}
+  .feat-ov-card .fov-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+  .feat-ov-card h4{font-size:14px;font-weight:700;line-height:1.4}
+  .feat-ov-card p{font-size:11px;color:var(--text-sub);line-height:1.6}
+  /* full-page feature */
+  .feat-full{display:grid;grid-template-columns:1fr 1fr;gap:48px;flex:1;align-items:center}
+  .feat-full.reverse{direction:rtl}
+  .feat-full.reverse>*{direction:ltr}
+  .feat-text .ft-num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+  .feat-text h3{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:14px}
+  .feat-text p{font-size:13px;color:var(--text-sub);line-height:1.9;margin-bottom:16px}
+  .feat-text .ft-badges{display:flex;gap:8px;flex-wrap:wrap}
+  .feat-text .ft-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;background:var(--bg-alt);border-radius:100px;padding:5px 12px}
+  .feat-visual{background:var(--bg-dark);border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+  .fv-header{background:#151929;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+  .fv-dots{display:flex;gap:4px}
+  .fv-dots span{width:7px;height:7px;border-radius:50%}
+  .fv-dots span:nth-child(1){background:#ff5f57}
+  .fv-dots span:nth-child(2){background:#febc2e}
+  .fv-dots span:nth-child(3){background:#28c840}
+  .fv-tab{font-size:10px;color:rgba(255,255,255,.5);border-bottom:2px solid var(--accent);padding-bottom:2px}
+  .fv-body{padding:20px;color:rgba(255,255,255,.6);font-size:11px}
+  /* metrics */
+  .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:20px}
+  .metric-card{background:var(--accent-light);border-radius:12px;padding:28px 16px;text-align:center}
+  .metric-card .m-num{font-size:40px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px}
+  .metric-card .m-label{font-size:12px;color:var(--text-sub);line-height:1.5}
+  /* usecase */
+  .usecase-container{display:grid;grid-template-columns:280px 1fr;gap:32px;flex:1}
+  .usecase-profile{background:var(--bg-alt);border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .usecase-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .usecase-name{font-size:16px;font-weight:700;margin-bottom:4px}
+  .usecase-role{font-size:12px;color:var(--text-sub);margin-bottom:16px;line-height:1.6}
+  .usecase-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .usecase-tag{font-size:10px;padding:4px 10px;border-radius:100px;background:#fff;border:1px solid var(--border);color:var(--text-sub);font-weight:500}
+  .usecase-results{display:flex;flex-direction:column;gap:14px}
+  .usecase-result{background:var(--bg-alt);border-radius:12px;padding:18px 24px;display:grid;grid-template-columns:80px 1fr;gap:16px;align-items:center}
+  .usecase-result-num{font-size:28px;font-weight:800;color:var(--accent);line-height:1}
+  .usecase-result-num small{font-size:14px}
+  .usecase-result h4{font-size:14px;font-weight:700;margin-bottom:2px}
+  .usecase-result p{font-size:12px;color:var(--text-sub);line-height:1.6}
+  /* pricing */
+  .pricing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;flex:1;align-items:start}
+  .pricing-card{border:1px solid var(--border);border-radius:16px;padding:32px 24px;text-align:center;position:relative}
+  .pricing-card.recommend{border-color:var(--accent);box-shadow:0 4px 20px rgba(37,99,235,.12)}
+  .pricing-card .p-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:4px 16px;border-radius:100px}
+  .pricing-card .p-name{font-size:18px;font-weight:700;margin-bottom:8px}
+  .pricing-card .p-price{font-size:32px;font-weight:800;color:var(--accent);margin-bottom:4px}
+  .pricing-card .p-price small{font-size:14px;font-weight:500;color:var(--text-sub)}
+  .pricing-card .p-desc{font-size:12px;color:var(--text-sub);margin-bottom:16px}
+  .pricing-card .p-features{list-style:none;text-align:left}
+  .pricing-card .p-features li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-sub);padding:5px 0}
+  /* select */
+  .select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .select-card{border:1px solid var(--border);border-radius:12px;padding:28px 24px;text-align:center}
+  .select-card-icon{width:56px;height:56px;border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+  .select-card h4{font-size:15px;font-weight:700;margin-bottom:8px}
+  .select-card p{font-size:12px;color:var(--text-sub);line-height:1.7}
+  /* flow */
+  .flow-steps{display:flex;gap:0;align-items:flex-start}
+  .flow-step{flex:1;text-align:center;position:relative;padding:0 12px}
+  .flow-step::after{content:'';position:absolute;top:24px;right:-8px;width:16px;height:2px;background:var(--accent)}
+  .flow-step:last-child::after{display:none}
+  .flow-step-num{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;margin:0 auto 14px}
+  .flow-step h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .flow-step p{font-size:11px;color:var(--text-sub);line-height:1.6}
+  /* faq */
+  .faq-item-doc{border-bottom:1px solid var(--border);padding:14px 0}
+  .faq-q-doc{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:flex-start;gap:10px}
+  .faq-q-doc .q-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .faq-a-doc{font-size:12px;color:var(--text-sub);line-height:1.8;padding-left:30px}
+  /* company */
+  .company-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1}
+  .company-table{width:100%;border-collapse:collapse}
+  .company-table th{text-align:left;padding:12px 16px;font-size:13px;font-weight:600;color:var(--text);background:var(--bg-alt);border-bottom:1px solid var(--border);width:140px}
+  .company-table td{padding:12px 16px;font-size:13px;color:var(--text-sub);border-bottom:1px solid var(--border)}
+  /* cta */
+  .cta-page{background:var(--bg-dark);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;height:720px;padding:80px 72px;position:relative}
+  .cta-page::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,.15) 0%,transparent 70%);border-radius:50%}
+  .cta-page::after{content:'';position:absolute;bottom:-100px;left:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%);border-radius:50%}
+  .cta-page h2{font-size:32px;font-weight:800;margin-bottom:16px;line-height:1.5;position:relative;z-index:1}
+  .cta-page h2 em{font-style:normal;color:var(--accent)}
+  .cta-page p{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:36px;line-height:1.8;position:relative;z-index:1}
+  .cta-btn{background:var(--accent);color:#fff;padding:16px 48px;border-radius:100px;font-size:16px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 4px 20px rgba(37,99,235,.4);position:relative;z-index:1}
+  .cta-contact{margin-top:32px;font-size:13px;color:rgba(255,255,255,.4);line-height:1.8;position:relative;z-index:1}
+  .sec-badge{display:flex;align-items:center;gap:6px;background:var(--bg-alt);border-radius:100px;padding:6px 14px;font-size:11px;font-weight:500}
+  @media print{@page{size:1280px 720px;margin:0}body{background:#fff;margin:0;padding:0}.slide{margin:0;box-shadow:none;border-radius:0;page-break-after:always;page-break-inside:avoid;width:1280px;height:720px;overflow:hidden}}
+</style>
+</head>
+<body>
+
+<!-- P1: 表紙 -->
+<div class="slide">
+  <div class="cover">
+    <div class="cover-left">
+      <div class="cover-logo"><span>CF</span><span>Manager</span></div>
+      <div class="cover-label">Service Document 2026</div>
+      <h1>経理をAIで<br>次のステージへ</h1>
+      <p class="cover-sub">銀行明細CSVを取り込むだけ。<br>予実照合・PL分析・キャッシュフロー予測が<br>5分で自動完結する経理AI自動化SaaS。</p>
+    </div>
+    <div class="cover-right">
+      <div class="cover-dashboard">
+        <div class="dash-header"><div class="dash-dots"><span></span><span></span><span></span></div><div class="dash-title-bar">cfmanager.app — ダッシュボード</div></div>
+        <div class="dash-body">
+          <div class="kpi-row">
+            <div class="kpi-card"><div class="kpi-label">当月支出</div><div class="kpi-value">¥4,218,530</div><span class="kpi-badge up">▼ 12.3%</span></div>
+            <div class="kpi-card"><div class="kpi-label">照合率</div><div class="kpi-value">96.9%</div><span class="kpi-badge up">✓ 完了</span></div>
+            <div class="kpi-card"><div class="kpi-label">要確認</div><div class="kpi-value">12件</div><span class="kpi-badge down">残り</span></div>
+          </div>
+          <div class="chart-area"><div class="chart-label">キャッシュフロー推移</div><div class="chart-bars"><div class="chart-bar" style="height:30%"></div><div class="chart-bar" style="height:45%"></div><div class="chart-bar" style="height:35%"></div><div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:75%"></div><div class="chart-bar" style="height:65%"></div><div class="chart-bar" style="height:85%"></div><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:95%"></div></div></div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px;font-size:10px;">
+            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span>地代家賃</span><span style="color:#34d399">照合済</span><span>¥354,187</span></div>
+            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span>USEN BUSINESS</span><span style="color:#34d399">照合済</span><span>¥29,500</span></div>
+            <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0"><span>MHFカクヤス</span><span style="color:#fbbf24">要確認</span><span>¥304,940</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cover-footer">Confidential &copy; 2026 株式会社Bewibe</div>
+  </div>
+</div>
+
+<!-- P2: 目次 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Contents</div>
+    <div class="sec-title">目次</div>
+    <ul class="toc-grid">
+      <li class="toc-item"><span class="toc-num">01</span> 経理DXの市場環境 <span class="toc-page">P.3-6</span></li>
+      <li class="toc-item"><span class="toc-num">02</span> こんなお悩みありませんか？ <span class="toc-page">P.7</span></li>
+      <li class="toc-item"><span class="toc-num">03</span> CFManagerとは <span class="toc-page">P.8</span></li>
+      <li class="toc-item"><span class="toc-num">04</span> 導入による変化 <span class="toc-page">P.9</span></li>
+      <li class="toc-item"><span class="toc-num">05</span> 5つの特長（概要） <span class="toc-page">P.10</span></li>
+      <li class="toc-item"><span class="toc-num">06</span> 特長の詳細 <span class="toc-page">P.11-15</span></li>
+      <li class="toc-item"><span class="toc-num">07</span> 導入効果 <span class="toc-page">P.16</span></li>
+      <li class="toc-item"><span class="toc-num">08</span> 活用シナリオ <span class="toc-page">P.17-19</span></li>
+      <li class="toc-item"><span class="toc-num">09</span> 料金プラン <span class="toc-page">P.20</span></li>
+      <li class="toc-item"><span class="toc-num">10</span> 選ばれる3つの理由 <span class="toc-page">P.21</span></li>
+      <li class="toc-item"><span class="toc-num">11</span> ご導入の流れ / FAQ <span class="toc-page">P.22-23</span></li>
+      <li class="toc-item"><span class="toc-num">12</span> 会社概要 <span class="toc-page">P.24</span></li>
+    </ul>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">2</div>
+</div>
+
+<!-- P3: 市場データ① 手作業依存率 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Market Data 01</div>
+    <div class="sec-title">経理業務の手作業依存率</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center">
+      <div>
+        <div style="font-size:72px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px">78<span style="font-size:36px">%</span></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">の中小企業が経理業務を手作業で処理</div>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2;margin-bottom:16px">中小企業庁の調査によると、従業員300名以下の企業の約8割が、予実照合・月次レポート作成・仕訳入力をスプレッドシートや紙ベースで処理しています。バックオフィスの中でも「経理・財務」はデジタル化の遅れが最も顕著な領域です。</p>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2">インボイス制度や電子帳簿保存法の施行で業務量が増加する中、手作業ではミス・属人化・残業の悪循環から抜け出せません。</p>
+      </div>
+      <div>
+        <div style="background:var(--bg-alt);border-radius:14px;padding:28px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:20px">経理業務別 手作業依存率</div>
+          <div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>予実照合</span><span style="font-weight:700;color:var(--accent)">85%</span></div><div style="background:var(--border);border-radius:4px;height:20px;overflow:hidden"><div style="width:85%;height:100%;background:var(--accent);border-radius:4px"></div></div></div>
+          <div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>月次レポート作成</span><span style="font-weight:700;color:var(--accent)">78%</span></div><div style="background:var(--border);border-radius:4px;height:20px;overflow:hidden"><div style="width:78%;height:100%;background:var(--accent);border-radius:4px;opacity:.85"></div></div></div>
+          <div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>仕訳入力・分類</span><span style="font-weight:700;color:var(--accent)">72%</span></div><div style="background:var(--border);border-radius:4px;height:20px;overflow:hidden"><div style="width:72%;height:100%;background:var(--accent);border-radius:4px;opacity:.7"></div></div></div>
+          <div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>経費精算</span><span style="font-weight:700;color:var(--accent)">65%</span></div><div style="background:var(--border);border-radius:4px;height:20px;overflow:hidden"><div style="width:65%;height:100%;background:var(--accent);border-radius:4px;opacity:.6"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>請求書処理</span><span style="font-weight:700;color:var(--accent)">58%</span></div><div style="background:var(--border);border-radius:4px;height:20px;overflow:hidden"><div style="width:58%;height:100%;background:var(--accent);border-radius:4px;opacity:.5"></div></div></div>
+        </div>
+        <div style="font-size:10px;color:var(--text-light);margin-top:10px;text-align:right">出典: 中小企業庁「中小企業白書」2024年版</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">3</div>
+</div>
+
+<!-- P4: 市場データ② 月次レポート作成時間 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Market Data 02</div>
+    <div class="sec-title">月次レポート作成にかかる時間</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center">
+      <div>
+        <div style="font-size:72px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px">20<span style="font-size:36px">h+</span></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">毎月のレポート作成に費やす平均時間</div>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2;margin-bottom:16px">日本CFO協会の調査によると、経理担当者は毎月平均20時間以上をレポート作成業務に費やしています。これは1人あたり年間240時間以上、約30営業日分に相当します。</p>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2">この時間は本来、資金計画策定・経営分析・予算管理などの付加価値業務に使えるはずの時間です。</p>
+      </div>
+      <div>
+        <div style="background:var(--bg-alt);border-radius:14px;padding:28px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:20px">月次レポート作成の時間内訳（平均）</div>
+          <div style="display:flex;align-items:flex-end;gap:12px;height:180px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:var(--accent);border-radius:6px 6px 0 0;height:160px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px"><span style="font-size:11px;font-weight:700;color:#fff">8h</span></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:var(--accent);opacity:.8;border-radius:6px 6px 0 0;height:120px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px"><span style="font-size:11px;font-weight:700;color:#fff">6h</span></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:var(--accent);opacity:.6;border-radius:6px 6px 0 0;height:80px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px"><span style="font-size:11px;font-weight:700;color:#fff">4h</span></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:var(--accent);opacity:.4;border-radius:6px 6px 0 0;height:40px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><span style="font-size:10px;font-weight:700;color:#fff">2h</span></div></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <div style="flex:1;text-align:center;font-size:10px;color:var(--text-sub)">データ収集<br>・照合</div>
+            <div style="flex:1;text-align:center;font-size:10px;color:var(--text-sub)">集計<br>・加工</div>
+            <div style="flex:1;text-align:center;font-size:10px;color:var(--text-sub)">レポート<br>作成</div>
+            <div style="flex:1;text-align:center;font-size:10px;color:var(--text-sub)">確認<br>・修正</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text-light);margin-top:10px;text-align:right">出典: 日本CFO協会「経理財務の実態調査」2024</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">4</div>
+</div>
+
+<!-- P5: 市場データ③ 市場規模 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Market Data 03</div>
+    <div class="sec-title">経理DX市場の成長規模</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center">
+      <div>
+        <div style="font-size:72px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px">2.1<span style="font-size:36px">兆円</span></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">2028年の国内経理DX市場規模（予測）</div>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2;margin-bottom:16px">国内の経理・会計DX市場は急速に拡大しており、2028年までに2.1兆円規模に達する見通しです。年平均成長率（CAGR）は約15%で推移しています。</p>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2">背景には、インボイス制度（2023年10月施行）や改正電子帳簿保存法（2024年1月完全義務化）など、制度面の追い風があります。</p>
+      </div>
+      <div>
+        <div style="background:var(--bg-alt);border-radius:14px;padding:28px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:20px">国内経理・会計DX市場規模の推移</div>
+          <div style="display:flex;align-items:flex-end;gap:16px;height:200px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px">1.2兆</div><div style="width:100%;background:var(--accent);opacity:.4;border-radius:6px 6px 0 0;height:95px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px">1.4兆</div><div style="width:100%;background:var(--accent);opacity:.5;border-radius:6px 6px 0 0;height:115px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px">1.6兆</div><div style="width:100%;background:var(--accent);opacity:.65;border-radius:6px 6px 0 0;height:135px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px">1.8兆</div><div style="width:100%;background:var(--accent);opacity:.8;border-radius:6px 6px 0 0;height:155px;border:1px dashed rgba(37,99,235,.3)"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px">2.1兆</div><div style="width:100%;background:var(--accent);border-radius:6px 6px 0 0;height:185px;border:1px dashed rgba(37,99,235,.3)"></div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:8px">
+            <div style="flex:1;text-align:center;font-size:11px;color:var(--text-sub)">2022</div>
+            <div style="flex:1;text-align:center;font-size:11px;color:var(--text-sub)">2023</div>
+            <div style="flex:1;text-align:center;font-size:11px;color:var(--text-sub)">2024</div>
+            <div style="flex:1;text-align:center;font-size:11px;color:var(--text-light)">2026<small>(予)</small></div>
+            <div style="flex:1;text-align:center;font-size:11px;color:var(--text-light)">2028<small>(予)</small></div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text-light);margin-top:10px;text-align:right">出典: 矢野経済研究所「会計ソリューション市場に関する調査」2024</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">5</div>
+</div>
+
+<!-- P6: 市場データ④ 外部連携不安 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Market Data 04</div>
+    <div class="sec-title">外部ツール連携への不安</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center">
+      <div>
+        <div style="font-size:72px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px">62<span style="font-size:36px">%</span></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">が外部ツールのAPI連携に不安を感じている</div>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2;margin-bottom:16px">freee社の調査によると、経理担当者の6割以上が「会計ソフトに外部ツールをAPI連携させること」に対して不安を感じています。</p>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2">特に、データ破損リスクや税理士の利用環境への影響、セキュリティ面での懸念が上位に挙がっています。CFManagerはこの課題に「CSV取込のみ・非接続設計」で応えます。</p>
+      </div>
+      <div>
+        <div style="background:var(--bg-alt);border-radius:14px;padding:28px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:20px">外部連携に対する懸念の内訳</div>
+          <!-- ドーナツチャート（CSS） -->
+          <div style="display:flex;align-items:center;gap:28px;margin-bottom:20px">
+            <div style="width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--accent) 0deg 223.2deg, var(--border) 223.2deg 360deg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:80px;height:80px;border-radius:50%;background:var(--bg-alt);display:flex;align-items:center;justify-content:center;flex-direction:column"><div style="font-size:28px;font-weight:800;color:var(--accent)">62%</div><div style="font-size:9px;color:var(--text-light)">不安あり</div></div></div>
+            <div style="font-size:12px;color:var(--text-sub);line-height:2">
+              <div><span style="color:var(--accent);font-weight:700">62%</span> 不安を感じている</div>
+              <div><span style="color:var(--text-light);font-weight:700">38%</span> 不安はない</div>
+            </div>
+          </div>
+          <!-- 懸念の詳細 -->
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div><div style="font-size:12px;color:var(--text-sub)"><strong>データ破損リスク</strong>（回答者の48%）</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0"></div><div style="font-size:12px;color:var(--text-sub)"><strong>税理士環境への影響</strong>（回答者の41%）</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div><div style="font-size:12px;color:var(--text-sub)"><strong>セキュリティ面の不安</strong>（回答者の37%）</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div style="font-size:12px;color:var(--text-sub)"><strong>運用の複雑化</strong>（回答者の29%）</div></div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--text-light);margin-top:10px;text-align:right">出典: freee「バックオフィスの課題に関する調査」2024</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">6</div>
+</div>
+
+<!-- P7: 課題提起 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Problem</div>
+    <div class="sec-title">こんなお悩みありませんか？</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1">
+      <!-- 手動照合 -->
+      <div style="background:var(--bg-alt);border-radius:14px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="15" y1="12" x2="18" y2="12"/><line x1="15" y1="15" x2="18" y2="15"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text)">スプレッドシートでの手動照合に限界</h4>
+          <p style="font-size:12px;color:var(--text-sub);line-height:1.7">毎月の予実照合をスプレッドシートで手作業。件数が増えるほどミスのリスクが高まり、月末は残業続き。</p>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">ミス率 高</span>
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">属人化</span>
+          </div>
+        </div>
+      </div>
+      <!-- レポート作成 -->
+      <div style="background:var(--bg-alt);border-radius:14px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text)">月次レポート作成に20時間以上</h4>
+          <p style="font-size:12px;color:var(--text-sub);line-height:1.7">部門別・科目別のPL作成やレポート整備に膨大な時間。本来の分析業務に手が回らない。</p>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">月20h+消費</span>
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">分析不足</span>
+          </div>
+        </div>
+      </div>
+      <!-- 月末まで数字見えない -->
+      <div style="background:var(--bg-alt);border-radius:14px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text)">月末まで数字が見えない</h4>
+          <p style="font-size:12px;color:var(--text-sub);line-height:1.7">月次締めを待たないと財務状況がわからず、タイムリーな経営判断ができていない。</p>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">判断遅延</span>
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">リアルタイム性なし</span>
+          </div>
+        </div>
+      </div>
+      <!-- 外部連携リスク -->
+      <div style="background:var(--bg-alt);border-radius:14px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text)">会計ソフト連携のデータ破損リスク</h4>
+          <p style="font-size:12px;color:var(--text-sub);line-height:1.7">外部ツールをAPI連携させると税理士が使う環境を壊してしまう不安。導入に踏み切れない。</p>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">破損リスク</span>
+            <span style="font-size:10px;background:#fef2f2;color:var(--red);padding:3px 8px;border-radius:4px;font-weight:600">税理士影響</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--accent);border-radius:12px;padding:18px 32px;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <p style="font-size:15px;font-weight:700;color:#fff">CFManagerはこれらの課題をすべて解決します</p>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">7</div>
+</div>
+
+<!-- P8: CFManagerとは -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">About</div>
+    <div class="sec-title">CFManagerとは</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;flex:1;align-items:center">
+      <div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:16px;line-height:1.5">銀行明細CSVを取り込むだけ。<br>経理のあらゆる業務をシンプルに。</h3>
+        <p style="font-size:13px;color:var(--text-sub);line-height:2;margin-bottom:20px">CFManagerは、銀行・クレジットカードの口座明細CSVをドラッグ＆ドロップするだけで、予実照合・PL分析・キャッシュフロー予測を自動で行うクラウドサービスです。freee・マネーフォワードなどの公式会計ソフトには一切アクセスしない安全設計です。</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="sec-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>公式会計ソフト非接続</div>
+          <div class="sec-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>データ暗号化保存</div>
+          <div class="sec-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>API接続なし</div>
+          <div class="sec-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>即日利用開始</div>
+        </div>
+      </div>
+      <div class="feat-visual">
+        <div class="fv-header"><div class="fv-dots"><span></span><span></span><span></span></div><div class="fv-tab">ダッシュボード</div></div>
+        <div class="fv-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">AI照合</div><div style="font-size:20px;font-weight:700;color:#34d399">96.9%</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">PL生成</div><div style="font-size:20px;font-weight:700;color:var(--accent)">自動</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">CF予測</div><div style="font-size:20px;font-weight:700;color:#fbbf24">即時</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin-bottom:12px;height:80px"><div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:6px">月次推移</div><div style="display:flex;align-items:flex-end;gap:4px;height:44px"><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:30%;opacity:.3"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:45%;opacity:.4"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:55%;opacity:.5"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:65%;opacity:.6"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:80%;opacity:.7"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:70%;opacity:.8"></div><div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:95%;opacity:1"></div></div></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.5)"><span>地代家賃</span><span style="color:#34d399">照合済</span><span>¥354,187</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;color:rgba(255,255,255,.5)"><span>USEN BUSINESS</span><span style="color:#34d399">照合済</span><span>¥29,500</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">8</div>
+</div>
+
+<!-- P9: Before / After -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Solution</div>
+    <div class="sec-title">導入による変化</div>
+    <div class="ba-grid">
+      <div class="ba-col ba-before">
+        <div class="ba-col-label">Before</div>
+        <h4>導入前の経理業務</h4>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>スプレッドシートで手動照合</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>月次レポート作成に20時間以上</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>月末まで数字が見えない</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>資金繰りの見通しが立たない</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>会計ソフト連携でデータ破損リスク</div>
+      </div>
+      <div class="ba-arrow-col"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="ba-col ba-after">
+        <div class="ba-col-label">After</div>
+        <h4>CFManager導入後</h4>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>AIが96.9%を自動照合</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>月次レポートが5分で完成</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>リアルタイムでPL・数字を把握</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>CF予測で資金計画を可視化</div>
+        <div class="ba-item"><div class="ba-item-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>CSV取込のみ。公式ソフトに非接続</div>
+      </div>
+    </div>
+    <!-- 余白埋め: 数値ハイライト -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px">
+      <div style="background:var(--bg-alt);border-radius:10px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--accent)">92%</div><div style="font-size:11px;color:var(--text-sub)">照合時間の削減</div></div>
+      <div style="background:var(--bg-alt);border-radius:10px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--accent)">20h→5m</div><div style="font-size:11px;color:var(--text-sub)">レポート作成</div></div>
+      <div style="background:var(--bg-alt);border-radius:10px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--green)">96.9%</div><div style="font-size:11px;color:var(--text-sub)">AI照合精度</div></div>
+      <div style="background:var(--bg-alt);border-radius:10px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--accent)">0</div><div style="font-size:11px;color:var(--text-sub)">会計ソフトへのアクセス</div></div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">9</div>
+</div>
+
+<!-- P10: 5つの特長 概要 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Features Overview</div>
+    <div class="sec-title">5つの特長</div>
+    <div class="feat-overview-grid">
+      <div class="feat-ov-card">
+        <div class="fov-num">POINT 01</div>
+        <div class="fov-icon" style="background:#ecfdf5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <h4>CSV即時取込</h4>
+        <p>ドラッグ&ドロップだけ。AIがフォーマットを自動判定</p>
+      </div>
+      <div class="feat-ov-card">
+        <div class="fov-num">POINT 02</div>
+        <div class="fov-icon" style="background:var(--accent-light)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h4>AI自動照合</h4>
+        <p>取引パターンを学習し96.9%を自動マッチング</p>
+      </div>
+      <div class="feat-ov-card">
+        <div class="fov-num">POINT 03</div>
+        <div class="fov-icon" style="background:#eff6ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h4>PL自動生成</h4>
+        <p>部門別・月別の損益計算書をリアルタイムで生成</p>
+      </div>
+      <div class="feat-ov-card">
+        <div class="fov-num">POINT 04</div>
+        <div class="fov-icon" style="background:#fffbeb"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h4>CF予測</h4>
+        <p>固定費を自動検出し将来のキャッシュフローを予測</p>
+      </div>
+      <div class="feat-ov-card">
+        <div class="fov-num">POINT 05</div>
+        <div class="fov-icon" style="background:#fef2f2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h4>安全設計</h4>
+        <p>公式会計ソフトに一切触れないCSV専用設計</p>
+      </div>
+    </div>
+    <!-- 下部にサマリーバー -->
+    <div style="background:var(--bg-dark);border-radius:12px;padding:24px 32px;margin-top:20px;display:flex;justify-content:space-between;align-items:center">
+      <div style="color:rgba(255,255,255,.5);font-size:13px">次ページから各特長を詳しくご紹介します</div>
+      <div style="display:flex;gap:12px">
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;text-align:center"><div style="font-size:18px;font-weight:700;color:#34d399">92%</div><div style="font-size:9px;color:rgba(255,255,255,.4)">作業削減</div></div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--accent)">5分</div><div style="font-size:9px;color:rgba(255,255,255,.4)">レポート</div></div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;text-align:center"><div style="font-size:18px;font-weight:700;color:#fbbf24">即日</div><div style="font-size:9px;color:rgba(255,255,255,.4)">利用開始</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">10</div>
+</div>
+
+<!-- P11: POINT 01 詳細 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="feat-full">
+      <div class="feat-text">
+        <div class="ft-num">POINT 01</div>
+        <h3>ドラッグ＆ドロップで<br>CSVを即座に取込</h3>
+        <p>銀行口座・クレジットカードの明細CSVをドラッグするだけ。AIがカラム配置・日付形式・文字コードを自動判定し、勘定科目を分類します。</p>
+        <div style="margin:12px 0;font-size:12px;color:var(--text-sub);line-height:1.9">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">資料限定：技術詳細</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>UTF-8 / Shift_JIS / EUC-JP の自動文字コード検出</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>1回の取込で最大10,000行を一括処理（約3秒）</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>重複取込をハッシュ値で自動検知・スキップ</div>
+          <div style="display:flex;align-items:flex-start;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>複数口座CSVの同時アップロード・バッチ処理対応</div>
+        </div>
+        <div class="ft-badges">
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>30+銀行対応</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>フォーマット自動判定</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>勘定科目AI分類</div>
+        </div>
+      </div>
+      <div class="feat-visual">
+        <div class="fv-header"><div class="fv-dots"><span></span><span></span><span></span></div><div class="fv-tab">インポート</div></div>
+        <div class="fv-body">
+          <div style="border:2px dashed rgba(255,255,255,.15);border-radius:10px;padding:20px;text-align:center;margin-bottom:10px">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:6px">CSVファイルをドラッグ＆ドロップ</div>
+          </div>
+          <!-- 取込処理フロー -->
+          <div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:6px">取込処理フロー</div>
+          <div style="display:flex;gap:4px;margin-bottom:10px">
+            <div style="flex:1;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;color:var(--accent);font-weight:600">①解析</div><div style="font-size:8px;color:rgba(255,255,255,.3)">文字コード・列判定</div></div>
+            <div style="flex:1;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;color:var(--accent);font-weight:600">②分類</div><div style="font-size:8px;color:rgba(255,255,255,.3)">勘定科目AI推定</div></div>
+            <div style="flex:1;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;color:var(--accent);font-weight:600">③検証</div><div style="font-size:8px;color:rgba(255,255,255,.3)">重複チェック</div></div>
+            <div style="flex:1;background:rgba(13,159,110,.15);border:1px solid rgba(13,159,110,.3);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;color:#34d399;font-weight:600">④完了</div><div style="font-size:8px;color:rgba(255,255,255,.3)">データ暗号化保存</div></div>
+          </div>
+          <!-- 対応銀行 -->
+          <div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:4px">対応フォーマット（一部）</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">三菱UFJ</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">三井住友</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">みずほ</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">楽天</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">ゆうちょ</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">JCB</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.5)">VISA</span>
+            <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;color:rgba(255,255,255,.4)">+25</span>
+          </div>
+          <div style="background:rgba(13,159,110,.1);border:1px solid rgba(13,159,110,.2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span style="color:#34d399;font-size:10px">三菱UFJ_202603.csv — 142件取込完了（重複0件スキップ）</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">11</div>
+</div>
+
+<!-- P12: POINT 02 詳細 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="feat-full reverse">
+      <div class="feat-text">
+        <div class="ft-num">POINT 02</div>
+        <h3>AIが予測と実績を<br>自動マッチング</h3>
+        <p>取引名の表記ゆれ（カクヤス/MHFカクヤス等）も自然言語処理で吸収。利用を重ねるほど精度が向上する学習型エンジンです。</p>
+        <div style="margin:12px 0;font-size:12px;color:var(--text-sub);line-height:1.9">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">照合エンジンの仕組み</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>金額・日付・取引名の3軸で信頼度スコアを算出</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>90%以上→自動照合 / 70-90%→要確認 / 70%未満→未照合</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>手動修正した結果をAIが学習→次月以降の精度向上</div>
+          <div style="display:flex;align-items:flex-start;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>「要確認」はワンクリックで承認 or 科目を手動指定</div>
+        </div>
+        <div class="ft-badges">
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>96.9%照合率</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>表記ゆれ吸収</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>継続学習</div>
+        </div>
+      </div>
+      <div class="feat-visual">
+        <div class="fv-header"><div class="fv-dots"><span></span><span></span><span></span></div><div class="fv-tab">照合管理</div></div>
+        <div class="fv-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#34d399">384</div><div style="font-size:9px;color:rgba(255,255,255,.4)">照合済</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#fbbf24">8</div><div style="font-size:9px;color:rgba(255,255,255,.4)">要確認</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#f87171">4</div><div style="font-size:9px;color:rgba(255,255,255,.4)">未照合</div></div>
+          </div>
+          <!-- 信頼度スコア表示 -->
+          <div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:4px">照合リスト（信頼度スコア付き）</div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;margin-bottom:8px">
+            <div style="display:grid;grid-template-columns:1fr 60px 50px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px"><span style="color:rgba(255,255,255,.5)">地代家賃 — ¥354,187</span><span style="color:#34d399;font-weight:600;text-align:right">99.2%</span><span style="color:#34d399;font-weight:600;text-align:right">✓ 済</span></div>
+            <div style="display:grid;grid-template-columns:1fr 60px 50px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px"><span style="color:rgba(255,255,255,.5)">USEN BUSINESS — ¥29,500</span><span style="color:#34d399;font-weight:600;text-align:right">97.8%</span><span style="color:#34d399;font-weight:600;text-align:right">✓ 済</span></div>
+            <div style="display:grid;grid-template-columns:1fr 60px 50px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px"><span style="color:rgba(255,255,255,.5)">AWS利用料 — ¥48,200</span><span style="color:#34d399;font-weight:600;text-align:right">95.1%</span><span style="color:#34d399;font-weight:600;text-align:right">✓ 済</span></div>
+            <div style="display:grid;grid-template-columns:1fr 60px 50px;padding:8px 12px;font-size:10px;background:rgba(251,191,36,.05)"><span style="color:rgba(255,255,255,.5)">MHFカクヤス — ¥304,940</span><span style="color:#fbbf24;font-weight:600;text-align:right">82.3%</span><span style="color:#fbbf24;font-weight:600;text-align:right">⚠ 確認</span></div>
+          </div>
+          <!-- 学習効果グラフ -->
+          <div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:4px">照合精度の月次推移（学習効果）</div>
+          <div style="display:flex;align-items:flex-end;gap:4px;height:32px">
+            <div style="flex:1;border-radius:2px 2px 0 0;background:var(--accent);height:55%;opacity:.4"></div>
+            <div style="flex:1;border-radius:2px 2px 0 0;background:var(--accent);height:65%;opacity:.5"></div>
+            <div style="flex:1;border-radius:2px 2px 0 0;background:var(--accent);height:75%;opacity:.6"></div>
+            <div style="flex:1;border-radius:2px 2px 0 0;background:var(--accent);height:85%;opacity:.8"></div>
+            <div style="flex:1;border-radius:2px 2px 0 0;background:#34d399;height:97%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:7px;color:rgba(255,255,255,.25);margin-top:2px"><span>1ヶ月目</span><span>2</span><span>3</span><span>4</span><span>5ヶ月目</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">12</div>
+</div>
+
+<!-- P13: POINT 03 詳細 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="feat-full">
+      <div class="feat-text">
+        <div class="ft-num">POINT 03</div>
+        <h3>損益計算書が<br>リアルタイムで自動生成</h3>
+        <p>CSVを取り込んだ瞬間にPLが更新。月次締めを待たず、経営陣にいつでも最新の財務状況を報告できます。</p>
+        <div style="margin:12px 0;font-size:12px;color:var(--text-sub);line-height:1.9">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">レポート機能の詳細</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>部門別・プロジェクト別・コストセンター別で切替表示</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>前月比・前年比・予算比の3パターン比較</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>PDF・Excel・CSVの3形式でエクスポート可能</div>
+          <div style="display:flex;align-items:flex-start;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>異常値（予算乖離10%超）を自動ハイライト表示</div>
+        </div>
+        <div class="ft-badges">
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>リアルタイム更新</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>3形式出力</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>異常値検出</div>
+        </div>
+      </div>
+      <div class="feat-visual">
+        <div class="fv-header"><div class="fv-dots"><span></span><span></span><span></span></div><div class="fv-tab">PL分析</div></div>
+        <div class="fv-body">
+          <div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:12px">損益計算書（予実対比）— 2026年3月</div>
+          <div style="display:grid;grid-template-columns:1fr 80px 80px 80px;gap:0;font-size:11px;margin-bottom:10px">
+            <div style="padding:6px 0;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.1);font-weight:600">科目</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.1);text-align:right;font-weight:600">予測</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.1);text-align:right;font-weight:600">実績</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.1);text-align:right;font-weight:600">達成率</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.06)">売上高</div>
+            <div style="padding:6px 0;text-align:right;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.06)">¥10.0M</div>
+            <div style="padding:6px 0;text-align:right;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)">¥9.75M</div>
+            <div style="padding:6px 0;text-align:right;color:#34d399;border-bottom:1px solid rgba(255,255,255,.06)">97.5%</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.06)">売上原価</div>
+            <div style="padding:6px 0;text-align:right;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.06)">¥3.5M</div>
+            <div style="padding:6px 0;text-align:right;color:#f87171;border-bottom:1px solid rgba(255,255,255,.06)">¥3.28M</div>
+            <div style="padding:6px 0;text-align:right;color:#34d399;border-bottom:1px solid rgba(255,255,255,.06)">93.7%</div>
+            <div style="padding:6px 0;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.06)">販管費</div>
+            <div style="padding:6px 0;text-align:right;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.06)">¥4.0M</div>
+            <div style="padding:6px 0;text-align:right;color:#f87171;border-bottom:1px solid rgba(255,255,255,.06)">¥4.12M</div>
+            <div style="padding:6px 0;text-align:right;color:#fbbf24;border-bottom:1px solid rgba(255,255,255,.06)">103%</div>
+            <div style="padding:8px 0;color:var(--accent);font-weight:700">営業利益</div>
+            <div style="padding:8px 0;text-align:right;color:rgba(255,255,255,.4);font-weight:600">¥2.5M</div>
+            <div style="padding:8px 0;text-align:right;color:var(--accent);font-weight:700">¥1.64M</div>
+            <div style="padding:8px 0;text-align:right;color:#fbbf24;font-weight:600">65.4%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">13</div>
+</div>
+
+<!-- P14: POINT 04 詳細 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="feat-full reverse">
+      <div class="feat-text">
+        <div class="ft-num">POINT 04</div>
+        <h3>固定費を自動検出し<br>キャッシュフローを予測</h3>
+        <p>取引履歴から定期支払い（家賃・光熱費・サブスク等）を自動検出し、将来のキャッシュフローを予測します。</p>
+        <div style="margin:12px 0;font-size:12px;color:var(--text-sub);line-height:1.9">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">予測エンジンの詳細</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>3ヶ月の履歴で定期支払いを自動検出（周期・金額パターン）</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>残高が設定閾値を下回る場合にメール＋画面アラート</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>楽観・標準・悲観の3シナリオ比較表示</div>
+          <div style="display:flex;align-items:flex-start;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>臨時入出金の手動追加で予測を即時調整可能</div>
+        </div>
+        <div class="ft-badges">
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>3シナリオ比較</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>閾値アラート</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>手動調整可</div>
+        </div>
+      </div>
+      <div class="feat-visual">
+        <div class="fv-header"><div class="fv-dots"><span></span><span></span><span></span></div><div class="fv-tab">キャッシュフロー予測</div></div>
+        <div class="fv-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">月額固定費</div><div style="font-size:18px;font-weight:700;color:#fff">¥5.9M</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">検出件数</div><div style="font-size:18px;font-weight:700;color:#fff">9件</div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.4)">年間見込</div><div style="font-size:18px;font-weight:700;color:var(--accent)">¥70.8M</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin-bottom:14px;height:90px">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:6px">CF推移予測（3ヶ月）</div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:50px">
+              <div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:60%;opacity:.6"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:55%;opacity:.6"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:70%;opacity:.7"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:var(--accent);height:50%;opacity:.5"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.15);height:45%;border:1px dashed rgba(255,255,255,.2)"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.15);height:40%;border:1px dashed rgba(255,255,255,.2)"></div>
+              <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.15);height:55%;border:1px dashed rgba(255,255,255,.2)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,.25);margin-top:4px"><span>3月</span><span>4月</span><span>5月</span><span>6月</span><span style="color:rgba(255,255,255,.15)">7月</span><span style="color:rgba(255,255,255,.15)">8月</span><span style="color:rgba(255,255,255,.15)">9月</span></div>
+          </div>
+          <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px"><span style="color:#fbbf24;font-size:11px">⚠ 6月末に残高が目標値を下回る見込みです</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">14</div>
+</div>
+
+<!-- P15: POINT 05 詳細 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="feat-full">
+      <div class="feat-text">
+        <div class="ft-num">POINT 05</div>
+        <h3>公式会計ソフトに一切触れない<br>安全設計</h3>
+        <p>CFManagerはfreee・マネーフォワードの「外側」で動作。APIトークンの発行や権限付与は一切不要です。</p>
+        <div style="margin:12px 0;font-size:12px;color:var(--text-sub);line-height:1.9">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">セキュリティ仕様</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>CSVデータはAES-256で暗号化して保存</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>通信は全てTLS 1.3で暗号化</div>
+          <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>退会時のデータ完全削除を保証（30日以内に物理削除）</div>
+          <div style="display:flex;align-items:flex-start;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:4px"><polyline points="20 6 9 17 4 12"/></svg>操作ログ・アクセスログの完全記録（監査対応）</div>
+        </div>
+        <div class="ft-badges">
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>AES-256暗号化</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>API接続なし</div>
+          <div class="ft-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>監査ログ</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <!-- アーキテクチャ図 -->
+        <div style="background:var(--accent-light);border-radius:14px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:20px">
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="background:#fff;border-radius:12px;padding:18px 24px;text-align:center;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04)">
+              <div style="font-size:10px;color:var(--text-light);margin-bottom:4px">公式会計ソフト</div>
+              <div style="font-size:14px;font-weight:700">freee / マネフォ</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <div style="font-size:10px;color:var(--red);font-weight:700">非接続</div>
+            </div>
+            <div style="background:#fff;border-radius:12px;padding:18px 24px;text-align:center;border:2px solid var(--accent);box-shadow:0 2px 8px rgba(37,99,235,.08)">
+              <div style="font-size:10px;color:var(--accent);margin-bottom:4px;font-weight:600">CFManager</div>
+              <div style="font-size:14px;font-weight:700;color:var(--accent)">CSV取込のみ</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+            <div style="background:#fff;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>データ暗号化保存</div>
+            <div style="background:#fff;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>API接続なし</div>
+            <div style="background:#fff;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>読み取り専用設計</div>
+          </div>
+        </div>
+        <!-- データフロー図 -->
+        <div style="background:var(--bg-alt);border-radius:12px;padding:20px;display:flex;align-items:center;justify-content:center;gap:12px">
+          <div style="background:#fff;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:600;border:1px solid var(--border)">銀行CSV</div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <div style="background:var(--accent);border-radius:8px;padding:10px 16px;font-size:12px;font-weight:600;color:#fff">CFManager</div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <div style="background:#fff;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:600;border:1px solid var(--border)">PL・CF予測</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">15</div>
+</div>
+
+<!-- P16: 導入効果 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Results</div>
+    <div class="sec-title">導入効果</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="m-num">92%</div><div class="m-label">照合作業の<br>時間削減</div></div>
+      <div class="metric-card"><div class="m-num">5分</div><div class="m-label">月次レポートの<br>作成時間</div></div>
+      <div class="metric-card"><div class="m-num">0件</div><div class="m-label">公式会計ソフトへの<br>アクセス</div></div>
+      <div class="metric-card"><div class="m-num">即日</div><div class="m-label">CSV取込から<br>利用開始まで</div></div>
+    </div>
+    <div style="background:var(--bg-alt);border-radius:12px;padding:28px 32px;flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="sec-title-sm">こんな方におすすめです</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div>
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:10px">経理担当者の方</h4>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>スプレッドシートの管理がゼロに</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>照合作業がボタン一つで完了</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>レポート作成が月20時間→5分に</div>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:10px">経営層・管理職の方</h4>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>リアルタイムでPL確認</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>CF予測で資金計画が明確に</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-sub)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>経営判断のスピードが大幅に向上</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">16</div>
+</div>
+
+<!-- P17: USE CASE 1 — 月次レポート地獄からの脱出 -->
+<div class="slide">
+  <div class="slide-inner" style="padding:44px 64px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent)">USE CASE 01</div>
+      <div style="height:1px;flex:1;background:var(--border)"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size:13px;color:var(--text-sub)">A社｜サービス業・従業員50名｜経理2名体制｜freee利用中｜月間500件</span>
+      </div>
+    </div>
+    <div style="background:#fef2f2;border-radius:10px;padding:16px 24px;margin-bottom:12px">
+      <div style="font-size:22px;font-weight:800;color:var(--red)">「月末の3日間、ほぼレポート作成だけで終わる」</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 48px 1fr;gap:0;flex:1;align-items:stretch">
+      <div style="background:var(--bg-alt);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:8px">BEFORE</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          3口座の明細を手入力で転記。科目別に手作業で集計し、Excelで部門別PLを作成・提出。
+        </div>
+        <!-- 画面モック：Excel手作業 -->
+        <div style="background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#217346;padding:5px 10px;display:flex;align-items:center;gap:6px">
+            <span style="font-size:8px;color:#fff;font-weight:700">Excel</span>
+            <span style="font-size:8px;color:rgba(255,255,255,.6)">月次レポート_3月_v3_最終_修正2.xlsx</span>
+          </div>
+          <div style="padding:0;flex:1;font-size:9px">
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #e0e0e0">
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888"></div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">A</div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">B</div>
+              <div style="background:#f0f0f0;padding:2px 4px;text-align:center;color:#888;font-weight:600">C</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">1</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#333">日付</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#333">摘要</div>
+              <div style="padding:2px 4px;color:#333">金額</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">2</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">3/1</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">振込 ヤマダ</div>
+              <div style="padding:2px 4px;color:#555">¥54,000</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee;background:#fff3f3">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">3</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#c00">3/3</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#c00">カクヤス？</div>
+              <div style="padding:2px 4px;color:#c00">¥32,00<span style="color:#c00">←桁?</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">4</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">3/5</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">AWS利用料</div>
+              <div style="padding:2px 4px;color:#555">¥128,400</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">月20時間以上消費</span>
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">属人化で代替不可</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div style="background:var(--accent-light);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">AFTER — CFManager導入</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          3口座のCSVをまとめてドラッグ＆ドロップ。AIが勘定科目を自動分類し、部門別PLをリアルタイム生成。
+        </div>
+        <!-- 画面モック：部門別PL自動生成 -->
+        <div style="background:var(--bg-dark);border-radius:8px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#151929;padding:6px 10px;display:flex;align-items:center;gap:6px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#ff5f57"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#febc2e"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#28c840"></span>
+            <span style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:16px;margin-left:4px;font-size:8px;color:rgba(255,255,255,.3);display:flex;align-items:center;padding:0 8px">部門別PL</span>
+          </div>
+          <div style="padding:10px;flex:1">
+            <div style="display:flex;gap:6px;margin-bottom:8px">
+              <div style="flex:1;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:6px;padding:6px 8px;text-align:center"><div style="font-size:8px;color:rgba(255,255,255,.4)">営業部</div><div style="font-size:13px;font-weight:700;color:#fff">¥4.2M</div><div style="font-size:8px;color:#34d399">+12.3%</div></div>
+              <div style="flex:1;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:6px;padding:6px 8px;text-align:center"><div style="font-size:8px;color:rgba(255,255,255,.4)">管理部</div><div style="font-size:13px;font-weight:700;color:#fff">¥1.8M</div><div style="font-size:8px;color:#34d399">-5.1%</div></div>
+              <div style="flex:1;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:6px;padding:6px 8px;text-align:center"><div style="font-size:8px;color:rgba(255,255,255,.4)">開発部</div><div style="font-size:13px;font-weight:700;color:#fff">¥2.6M</div><div style="font-size:8px;color:#34d399">+3.7%</div></div>
+            </div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px">
+              <div style="display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,.35);margin-bottom:4px"><span>科目</span><span>金額</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span>売上高</span><span>¥8,640,000</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span>人件費</span><span>¥3,200,000</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0"><span>営業利益</span><span style="color:#34d399;font-weight:700">¥1,240,000</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:6px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:8px;color:#34d399">PDF出力準備完了</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">所要時間30分に短縮</span>
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">誰でも操作可能</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">17</div>
+</div>
+
+<!-- P18: USE CASE 2 — 手動照合ミスの撲滅 -->
+<div class="slide">
+  <div class="slide-inner" style="padding:44px 64px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent)">USE CASE 02</div>
+      <div style="height:1px;flex:1;background:var(--border)"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size:13px;color:var(--text-sub)">B社｜小売業・従業員120名｜経理3名体制｜マネフォ利用中｜月間1,200件</span>
+      </div>
+    </div>
+    <div style="background:#fef2f2;border-radius:10px;padding:16px 24px;margin-bottom:12px">
+      <div style="font-size:22px;font-weight:800;color:var(--red)">「毎月10件以上の照合ミスが発覚し、決算修正に発展した」</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 48px 1fr;gap:0;flex:1;align-items:stretch">
+      <div style="background:var(--bg-alt);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:8px">BEFORE</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          7口座・月1,200件をスプレッドシートで照合。表記ゆれで差異が頻発し、月末2日を原因調査に消費。
+        </div>
+        <!-- 画面モック：手動照合スプレッドシート -->
+        <div style="background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#217346;padding:5px 10px;display:flex;align-items:center;gap:6px">
+            <span style="font-size:8px;color:#fff;font-weight:700">Excel</span>
+            <span style="font-size:8px;color:rgba(255,255,255,.6)">照合チェック_2026年3月.xlsx</span>
+          </div>
+          <div style="padding:0;flex:1;font-size:9px">
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 50px;border-bottom:1px solid #e0e0e0">
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888"></div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">予定</div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">実績</div>
+              <div style="background:#f0f0f0;padding:2px 4px;text-align:center;color:#888;font-weight:600">照合</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 50px;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">1</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">カクヤス</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">MHFカクヤス</div>
+              <div style="padding:2px 4px;text-align:center;color:#c00;font-weight:700">✕ 不一致</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 50px;border-bottom:1px solid #eee;background:#fff3f3">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">2</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">㈱カクヤス</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">カクヤス</div>
+              <div style="padding:2px 4px;text-align:center;color:#c00;font-weight:700">✕ 不一致</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 50px;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">3</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">Amazon</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">AMAZON.CO.JP</div>
+              <div style="padding:2px 4px;text-align:center;color:#c00;font-weight:700">✕ 不一致</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 50px;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">4</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">オフィス家賃</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">オフィス家賃</div>
+              <div style="padding:2px 4px;text-align:center;color:#217346;font-weight:700">○ 一致</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">月10件以上のミス</span>
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">決算修正リスク</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div style="background:var(--accent-light);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">AFTER — CFManager導入</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          AIが表記ゆれを吸収し信頼度スコアを算出。96.9%を自動照合、残り3.1%のみワンクリック承認。
+        </div>
+        <!-- 画面モック：照合管理画面 -->
+        <div style="background:var(--bg-dark);border-radius:8px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#151929;padding:6px 10px;display:flex;align-items:center;gap:6px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#ff5f57"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#febc2e"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#28c840"></span>
+            <span style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:16px;margin-left:4px;font-size:8px;color:rgba(255,255,255,.3);display:flex;align-items:center;padding:0 8px">照合管理</span>
+          </div>
+          <div style="padding:10px;flex:1">
+            <div style="display:flex;gap:6px;margin-bottom:8px">
+              <div style="flex:1;background:rgba(13,159,110,.12);border:1px solid rgba(13,159,110,.25);border-radius:6px;padding:6px;text-align:center"><div style="font-size:18px;font-weight:800;color:#34d399">96.9%</div><div style="font-size:8px;color:rgba(255,255,255,.4)">自動照合</div></div>
+              <div style="flex:1;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:6px;text-align:center"><div style="font-size:18px;font-weight:800;color:#fbbf24">3.1%</div><div style="font-size:8px;color:rgba(255,255,255,.4)">要確認</div></div>
+            </div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:8px;color:rgba(255,255,255,.35);margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.06)"><span>取引名</span><span>信頼度</span><span>状態</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span>カクヤス</span><span style="color:#34d399">98%</span><span style="font-size:8px;background:rgba(13,159,110,.15);color:#34d399;padding:1px 6px;border-radius:3px">照合済</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span>MHFカクヤス</span><span style="color:#34d399">95%</span><span style="font-size:8px;background:rgba(13,159,110,.15);color:#34d399;padding:1px 6px;border-radius:3px">照合済</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;color:rgba(255,255,255,.6);padding:3px 0"><span>㈱カクヤス</span><span style="color:#fbbf24">82%</span><span style="font-size:8px;background:rgba(251,191,36,.15);color:#fbbf24;padding:1px 6px;border-radius:3px;cursor:pointer">承認→</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:6px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:8px;color:#34d399">表記ゆれ「カクヤス」→ 3件を同一取引先として学習完了</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">照合ミス0件</span>
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">AIが継続学習</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">18</div>
+</div>
+
+<!-- P19: USE CASE 3 — 資金繰りの可視化 -->
+<div class="slide">
+  <div class="slide-inner" style="padding:44px 64px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent)">USE CASE 03</div>
+      <div style="height:1px;flex:1;background:var(--border)"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size:13px;color:var(--text-sub)">C社｜SaaS企業・従業員20名｜管理兼任1名｜freee利用中｜月間200件</span>
+      </div>
+    </div>
+    <div style="background:#fef2f2;border-radius:10px;padding:16px 24px;margin-bottom:12px">
+      <div style="font-size:22px;font-weight:800;color:var(--red)">「来月末に資金が足りるのか、月次締めまでわからない」</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 48px 1fr;gap:0;flex:1;align-items:stretch">
+      <div style="background:var(--bg-alt);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:8px">BEFORE</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          変動費が読めず代表が毎日口座残高を手動確認。Excelで簡易CF表を作成するも精度が低い。
+        </div>
+        <!-- 画面モック：Excel手動CF表 -->
+        <div style="background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#217346;padding:5px 10px;display:flex;align-items:center;gap:6px">
+            <span style="font-size:8px;color:#fff;font-weight:700">Excel</span>
+            <span style="font-size:8px;color:rgba(255,255,255,.6)">資金繰り表_手動_v5.xlsx</span>
+          </div>
+          <div style="padding:0;flex:1;font-size:9px">
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #e0e0e0">
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888"></div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">4月</div>
+              <div style="background:#f0f0f0;border-right:1px solid #d0d0d0;padding:2px 4px;text-align:center;color:#888;font-weight:600">5月</div>
+              <div style="background:#f0f0f0;padding:2px 4px;text-align:center;color:#888;font-weight:600">6月</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">入金</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">¥3.2M</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">¥3.2M</div>
+              <div style="padding:2px 4px;color:#555">¥3.2M</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">出金</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">¥2.8M</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#c00">¥??M</div>
+              <div style="padding:2px 4px;color:#c00">¥??M</div>
+            </div>
+            <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid #eee;background:#fff3f3">
+              <div style="background:#f8f8f8;border-right:1px solid #e0e0e0;padding:2px 4px;text-align:center;color:#aaa">残高</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#555">¥8.4M</div>
+              <div style="border-right:1px solid #eee;padding:2px 4px;color:#c00;font-weight:700">不明</div>
+              <div style="padding:2px 4px;color:#c00;font-weight:700">不明</div>
+            </div>
+          </div>
+          <div style="padding:6px 8px;background:#fff8f0;border-top:1px solid #eee;display:flex;align-items:center;gap:4px">
+            <span style="font-size:8px;color:#c00">⚠ AWS・外注費が月ごとに変動 → 予測不可能</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">資金繰りが見えない</span>
+          <span style="font-size:13px;background:#fee2e2;color:var(--red);padding:6px 14px;border-radius:6px;font-weight:700">融資相談が後手</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div style="background:var(--accent-light);border-radius:12px;padding:20px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">AFTER — CFManager導入</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.9">
+          CSV取込で固定費を自動検出。3ヶ月先まで3シナリオでCF予測。閾値割れ時にアラート通知。
+        </div>
+        <!-- 画面モック：CF予測画面 -->
+        <div style="background:var(--bg-dark);border-radius:8px;overflow:hidden;margin-top:10px;flex:1;display:flex;flex-direction:column">
+          <div style="background:#151929;padding:6px 10px;display:flex;align-items:center;gap:6px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#ff5f57"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#febc2e"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#28c840"></span>
+            <span style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:16px;margin-left:4px;font-size:8px;color:rgba(255,255,255,.3);display:flex;align-items:center;padding:0 8px">キャッシュフロー予測</span>
+          </div>
+          <div style="padding:10px;flex:1">
+            <div style="font-size:8px;color:rgba(255,255,255,.35);margin-bottom:6px">3ヶ月先 シナリオ別残高予測</div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:8px;color:rgba(255,255,255,.4);width:24px">楽観</span><div style="flex:1;background:rgba(13,159,110,.15);border-radius:4px;height:18px;position:relative"><div style="width:92%;height:100%;background:rgba(13,159,110,.4);border-radius:4px"></div></div><span style="font-size:10px;color:#34d399;font-weight:700;width:48px;text-align:right">¥12.4M</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:8px;color:rgba(255,255,255,.4);width:24px">標準</span><div style="flex:1;background:rgba(37,99,235,.15);border-radius:4px;height:18px;position:relative"><div style="width:60%;height:100%;background:rgba(37,99,235,.4);border-radius:4px"></div></div><span style="font-size:10px;color:var(--accent);font-weight:700;width:48px;text-align:right">¥8.1M</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:8px;color:rgba(255,255,255,.4);width:24px">悲観</span><div style="flex:1;background:rgba(220,53,69,.15);border-radius:4px;height:18px;position:relative"><div style="width:24%;height:100%;background:rgba(220,53,69,.4);border-radius:4px"></div></div><span style="font-size:10px;color:#f87171;font-weight:700;width:48px;text-align:right">¥3.2M</span></div>
+            </div>
+            <div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:5px">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span style="font-size:8px;color:#fbbf24">悲観シナリオ：7月末に閾値¥5M割れの可能性</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:6px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:8px;color:#34d399">融資シミュレーション資料 PDF出力可能</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">3ヶ月先まで予測</span>
+          <span style="font-size:13px;background:#dbeafe;color:var(--accent);padding:6px 14px;border-radius:6px;font-weight:700">自動アラート通知</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">19</div>
+</div>
+
+<!-- P18: 料金プラン -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Pricing</div>
+    <div class="sec-title">料金プラン</div>
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="p-name">スターター</div>
+        <div class="p-price">¥9,800<small> /月</small></div>
+        <div class="p-desc">小規模事業者向け</div>
+        <ul class="p-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>1〜3口座</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>月500件まで</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>CSV取込・AI照合</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>メールサポート</li>
+        </ul>
+      </div>
+      <div class="pricing-card recommend">
+        <div class="p-badge">おすすめ</div>
+        <div class="p-name">スタンダード</div>
+        <div class="p-price">¥29,800<small> /月</small></div>
+        <div class="p-desc">成長中の中小企業向け</div>
+        <ul class="p-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>10口座まで</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>月3,000件まで</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>PL分析・CF予測付き</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>チャットサポート</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <div class="p-name">エンタープライズ</div>
+        <div class="p-price" style="font-size:24px">要お問い合わせ</div>
+        <div class="p-desc">大企業・グループ向け</div>
+        <ul class="p-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>口座数無制限</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>取引件数無制限</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>専任サポート・SLA</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>カスタム連携対応</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;margin-top:16px;font-size:12px;color:var(--text-light)">
+      <p>※ 年間契約で月額<strong style="color:var(--accent)">20%オフ</strong></p>
+      <p>※ 初期費用・解約手数料なし</p>
+      <p>※ 全プラン<strong>14日間無料トライアル</strong>付き（カード登録不要）</p>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">20</div>
+</div>
+
+<!-- P21: 選ばれる理由 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Why CFManager</div>
+    <div class="sec-title">選ばれる3つの理由</div>
+    <div class="select-grid">
+      <div class="select-card"><div class="select-card-icon" style="background:#ecfdf5"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>安全性：会計ソフトに触れない</h4><p>API連携ではなくCSV取込方式。公式会計ソフトのデータには一切アクセスしないため、税理士環境を壊すリスクがゼロ。</p></div>
+      <div class="select-card"><div class="select-card-icon" style="background:var(--accent-light)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h4>速度：即日利用開始</h4><p>CSVをドラッグするだけで即日運用開始。初期設定・データ移行・API連携設定は一切不要。IT部門への依頼なしで導入可能。</p></div>
+      <div class="select-card"><div class="select-card-icon" style="background:#fffbeb"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h4>先読み：AI予測機能</h4><p>CF予測・PL分析・定期支払い検出など「先を読む」機能を標準搭載。月次締めを待たずに経営判断が可能。</p></div>
+    </div>
+    <div style="background:var(--bg-alt);border-radius:12px;padding:24px 32px;margin-top:20px;flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr 1fr;gap:0;font-size:12px">
+        <div style="padding:10px 0;font-weight:700;border-bottom:2px solid var(--accent)">比較項目</div>
+        <div style="padding:10px 0;font-weight:700;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent)">CFManager</div>
+        <div style="padding:10px 0;font-weight:700;text-align:center;color:var(--text-light);border-bottom:2px solid var(--accent)">スプレッドシート</div>
+        <div style="padding:10px 0;font-weight:700;text-align:center;color:var(--text-light);border-bottom:2px solid var(--accent)">API連携ツール</div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--border)">会計ソフトへの影響</div>
+        <div style="padding:8px 0;text-align:center;color:var(--green);font-weight:600;border-bottom:1px solid var(--border)">なし</div>
+        <div style="padding:8px 0;text-align:center;color:var(--green);font-weight:600;border-bottom:1px solid var(--border)">なし</div>
+        <div style="padding:8px 0;text-align:center;color:var(--red);font-weight:600;border-bottom:1px solid var(--border)">あり</div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--border)">自動照合</div>
+        <div style="padding:8px 0;text-align:center;color:var(--green);font-weight:600;border-bottom:1px solid var(--border)">AI自動</div>
+        <div style="padding:8px 0;text-align:center;color:var(--red);font-weight:600;border-bottom:1px solid var(--border)">手動</div>
+        <div style="padding:8px 0;text-align:center;color:var(--text-sub);border-bottom:1px solid var(--border)">一部自動</div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--border)">CF予測</div>
+        <div style="padding:8px 0;text-align:center;color:var(--green);font-weight:600;border-bottom:1px solid var(--border)">標準搭載</div>
+        <div style="padding:8px 0;text-align:center;color:var(--red);font-weight:600;border-bottom:1px solid var(--border)">なし</div>
+        <div style="padding:8px 0;text-align:center;color:var(--text-sub);border-bottom:1px solid var(--border)">オプション</div>
+        <div style="padding:8px 0">導入スピード</div>
+        <div style="padding:8px 0;text-align:center;color:var(--green);font-weight:600">即日</div>
+        <div style="padding:8px 0;text-align:center;color:var(--text-sub)">即日</div>
+        <div style="padding:8px 0;text-align:center;color:var(--red);font-weight:600">数週間</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">21</div>
+</div>
+
+<!-- P22: 導入の流れ -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Flow</div>
+    <div class="sec-title">ご導入の流れ</div>
+    <div class="flow-steps" style="margin-bottom:40px">
+      <div class="flow-step"><div class="flow-step-num">1</div><h4>お問い合わせ</h4><p>フォームまたはメールで<br>お気軽にご連絡ください</p></div>
+      <div class="flow-step"><div class="flow-step-num">2</div><h4>ヒアリング</h4><p>現在の経理フローや<br>課題を30分程度お伺い</p></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><h4>無料トライアル</h4><p>14日間、全機能を<br>無料でお試しいただけます</p></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><h4>本契約・運用開始</h4><p>CSVを取り込むだけで<br>即日利用を開始できます</p></div>
+    </div>
+    <div style="background:var(--bg-alt);border-radius:12px;padding:28px 32px;flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="sec-title-sm">対応CSVフォーマット</div>
+      <p style="font-size:13px;color:var(--text-sub);line-height:1.9;margin-bottom:16px">三菱UFJ・三井住友・みずほ・楽天・ゆうちょ等の主要銀行、および主要クレジットカード会社のCSVフォーマットに対応。AIがフォーマットを自動判定するため、複雑な設定は不要です。</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">三菱UFJ銀行</span>
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">三井住友銀行</span>
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">みずほ銀行</span>
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">楽天銀行</span>
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">ゆうちょ銀行</span>
+        <span style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:500">その他主要銀行・カード</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">22</div>
+</div>
+
+<!-- P23: FAQ -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">FAQ</div>
+    <div class="sec-title">よくある質問</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 48px;flex:1">
+      <div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>freee・マネーフォワードと連携しますか？</div><div class="faq-a-doc">いいえ、連携しません。CSVを取り込む設計で、公式会計ソフトのAPIやデータには一切アクセスしません。</div></div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>どんな銀行・カードのCSVに対応？</div><div class="faq-a-doc">三菱UFJ・三井住友・みずほ・楽天・ゆうちょ等の主要銀行、主要クレジットカード会社に対応しています。</div></div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>セキュリティ面は大丈夫？</div><div class="faq-a-doc">データは暗号化して保存。銀行口座への直接アクセスや会計ソフトへのアクセスは一切行いません。</div></div>
+      </div>
+      <div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>導入にシステム知識は必要？</div><div class="faq-a-doc">不要です。CSVファイルをドラッグ＆ドロップするだけで即日利用開始。初期費用もありません。</div></div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>無料トライアル中に解約できる？</div><div class="faq-a-doc">はい、14日間の無料トライアル中はいつでも解約可能。課金は一切されません。カード登録も不要です。</div></div>
+        <div class="faq-item-doc"><div class="faq-q-doc"><span class="q-badge">Q</span>税理士にも使ってもらえる？</div><div class="faq-a-doc">はい。レポートのPDFエクスポートに対応しており、税理士への共有もスムーズです。既存の会計環境に影響しません。</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">23</div>
+</div>
+
+<!-- P24: 会社概要 -->
+<div class="slide">
+  <div class="slide-inner">
+    <div class="sec-label">Company</div>
+    <div class="sec-title">会社概要</div>
+    <div class="company-grid">
+      <div>
+        <table class="company-table">
+          <tr><th>会社名</th><td>株式会社Bewibe（Bewibe Co., Ltd.）</td></tr>
+          <tr><th>代表者</th><td>佐々木 遼</td></tr>
+          <tr><th>所在地</th><td>東京都新宿区横寺町31 水寮204号</td></tr>
+          <tr><th>設立</th><td>2021年5月</td></tr>
+          <tr><th>サービスURL</th><td>https://cfmanager-lp.netlify.app</td></tr>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div class="cover-dashboard" style="box-shadow:0 12px 40px rgba(0,0,0,.15);border-radius:12px;overflow:hidden">
+          <div class="dash-header"><div class="dash-dots"><span></span><span></span><span></span></div><div class="dash-title-bar">cfmanager.app — ダッシュボード</div></div>
+          <div class="dash-body">
+            <div class="kpi-row">
+              <div class="kpi-card"><div class="kpi-label">当月支出</div><div class="kpi-value">¥4,218,530</div><span class="kpi-badge up">▼ 12.3%</span></div>
+              <div class="kpi-card"><div class="kpi-label">照合率</div><div class="kpi-value">96.9%</div><span class="kpi-badge up">✓ 完了</span></div>
+              <div class="kpi-card"><div class="kpi-label">要確認</div><div class="kpi-value">12件</div><span class="kpi-badge down">残り</span></div>
+            </div>
+            <div class="chart-area"><div class="chart-label">キャッシュフロー推移</div><div class="chart-bars"><div class="chart-bar" style="height:30%"></div><div class="chart-bar" style="height:45%"></div><div class="chart-bar" style="height:35%"></div><div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:75%"></div><div class="chart-bar" style="height:65%"></div><div class="chart-bar" style="height:85%"></div><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:95%"></div></div></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px;font-size:10px;">
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span>地代家賃</span><span style="color:#34d399">照合済</span><span>¥354,187</span></div>
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span>USEN BUSINESS</span><span style="color:#34d399">照合済</span><span>¥29,500</span></div>
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.5);padding:4px 0"><span>MHFカクヤス</span><span style="color:#fbbf24">要確認</span><span>¥304,940</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-logo"><span>CF</span><span>Manager</span></div>
+  <div class="page-num">24</div>
+</div>
+
+<!-- P25: CTA -->
+<div class="slide">
+  <div class="cta-page">
+    <div class="cover-logo" style="margin-bottom:40px;position:relative;z-index:1"><span>CF</span><span>Manager</span></div>
+    <h2>まずは<em>14日間</em>、<br>無料でお試しください</h2>
+    <p>クレジットカード不要・初期費用ゼロ。<br>CSVを取り込むだけで即日利用を開始できます。</p>
+    <a href="https://cfmanager-lp.netlify.app/#contact-form" class="cta-btn">お問い合わせ・無料トライアル申込</a>
+    <div class="cta-contact">お問い合わせ先：info@cfmanager.app<br>14日間無料トライアル（カード登録不要）</div>
+    <div class="cover-footer" style="bottom:28px">Confidential &copy; 2026 株式会社Bewibe</div>
+  </div>
+</div>
+
+</body>
+</html>

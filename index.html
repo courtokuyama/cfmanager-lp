@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="銀行明細CSVを取り込むだけ。予実照合・PL分析・キャッシュフロー予測が5分で自動完結。freee・マネフォには一切触れない、経理部のための安全な分析ツール。">
+<meta property="og:title" content="CFManager — 経理をAIで次のステージへ">
+<meta property="og:description" content="銀行明細CSVを取り込むだけ。予実照合・PL分析・CF予測が5分で自動完結。freee・マネフォに一切触れない安全設計。">
+<meta property="og:type" content="website">
+<title>CFManager — 経理をAIで次のステージへ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='16' width='100' height='100' fill='%232563eb'/><text x='50' y='68' text-anchor='middle' font-size='52' font-weight='bold' fill='white'>CF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f5f6f8;
+    --bg-dark: #1a1e2e;
+    --text: #1e2330;
+    --text-sub: #555e6e;
+    --text-light: #8891a0;
+    --accent: #2563eb;
+    --accent-light: #eef2ff;
+    --accent-dark: #1a4fcc;
+    --border: #e5e7eb;
+    --green: #0d9f6e;
+    --red: #dc3545;
+    --yellow: #d9880b;
+    --radius: 8px;
+    --radius-lg: 16px;
+    --max-w: 1100px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; height: auto; display: block; }
+
+  /* ─── NAV ─── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); height: 68px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 40px;
+    display: flex; align-items: center; height: 100%;
+  }
+  .nav-logo {
+    font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-right: 48px;
+  }
+  .nav-logo span:first-child { color: var(--accent); }
+  .nav-menu { display: flex; align-items: center; gap: 0; flex: 1; }
+  .nav-item {
+    position: relative; padding: 22px 20px; font-size: 14px;
+    font-weight: 500; color: var(--text-sub); cursor: pointer;
+    transition: color 0.15s;
+  }
+  .nav-item:hover { color: var(--text); }
+  .nav-item.has-dropdown::after {
+    content: ''; display: inline-block; width: 0; height: 0;
+    border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-top: 4px solid currentColor; margin-left: 6px; vertical-align: middle;
+  }
+  .nav-dropdown {
+    display: none; position: absolute; top: 100%; left: 0;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 8px 0; min-width: 260px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  }
+  .nav-item.has-dropdown:hover .nav-dropdown { display: block; }
+  .nav-dropdown a {
+    display: block; padding: 10px 20px; font-size: 13px;
+    color: var(--text-sub); transition: background 0.1s, color 0.1s;
+  }
+  .nav-dropdown a:hover { background: var(--bg-alt); color: var(--text); }
+  .nav-cta-wrap { margin-left: auto; }
+  .nav-cta {
+    background: var(--accent); color: #fff; border: none;
+    padding: 10px 28px; border-radius: 100px; font-size: 13px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent-dark); }
+
+  /* ─── HERO (PC: 2-col original / Mobile: visual-first overlay) ─── */
+  .hero {
+    padding: 140px 40px 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .hero-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center;
+  }
+  .hero-content {
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero-visual {
+    position: relative;
+    padding: 24px;
+  }
+
+  .hero-badge {
+    display: inline-block; font-size: 13px; font-weight: 600;
+    color: var(--accent); background: var(--accent-light);
+    padding: 6px 18px; border-radius: 100px; margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero-title {
+    font-size: clamp(30px, 3.6vw, 46px); font-weight: 800;
+    line-height: 1.35; letter-spacing: -0.5px; margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.08s both;
+  }
+  .hero-sub {
+    font-size: 15px; color: var(--text-sub); line-height: 1.9;
+    margin-bottom: 32px; text-wrap: pretty;
+    animation: fadeUp 0.5s ease 0.16s both;
+  }
+  .hero-actions {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    align-items: center; margin-bottom: 12px;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .hero-cta-primary {
+    background: var(--accent); color: #fff; border: none;
+    padding: 15px 36px; border-radius: 100px; font-size: 15px;
+    font-weight: 700; cursor: pointer; font-family: inherit;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+  .hero-cta-primary:hover {
+    background: var(--accent-dark); transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(37,99,235,0.4);
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text-sub);
+    border: 1px solid var(--border); padding: 15px 32px;
+    border-radius: 100px; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, color 0.15s; text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-note { font-size: 13px; color: var(--text-light); }
+  .hero-trust {
+    display: flex; align-items: center; gap: 18px; margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .hero-trust-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--text-sub); font-weight: 500;
+  }
+  .hero-trust-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* Dashboard mock */
+  .dashboard-frame {
+    background: var(--bg-dark); border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.15);
+    transform: perspective(1200px) rotateY(-3deg) rotateX(1deg);
+    transition: transform 0.4s ease;
+    position: relative; z-index: 1;
+  }
+  .dashboard-frame:hover { transform: perspective(1200px) rotateY(0) rotateX(0); }
+
+  /* Mobile overlay animation keyframes */
+  @keyframes heroVisualIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes heroOverlayIn {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Floating feature cards */
+  .float-card {
+    position: absolute; z-index: 10;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 600; color: var(--text);
+    white-space: nowrap;
+    animation: floatIn 0.6s ease both;
+  }
+  .float-card .fc-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .float-card .fc-icon svg { width: 16px; height: 16px; }
+  .float-card .fc-sub { font-size: 10px; font-weight: 400; color: var(--text-light); margin-top: 1px; }
+  .fc-1 { top: -4px; left: -12px; animation-delay: 0.3s; }
+  .fc-2 { top: 28%; right: -20px; animation-delay: 0.45s; }
+  .fc-3 { bottom: 48px; left: -16px; animation-delay: 0.6s; }
+  .fc-4 { bottom: 0px; right: 28px; animation-delay: 0.75s; }
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .dash-header {
+    background: #151929; border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .dash-dots { display: flex; gap: 5px; }
+  .dash-dots span { width: 8px; height: 8px; border-radius: 50%; }
+  .dash-dots span:nth-child(1) { background: #ff5f57; }
+  .dash-dots span:nth-child(2) { background: #febc2e; }
+  .dash-dots span:nth-child(3) { background: #28c840; }
+  .dash-title-bar {
+    flex: 1; background: rgba(255,255,255,0.06); border-radius: 6px;
+    height: 26px; display: flex; align-items: center;
+    padding: 0 12px; font-size: 11px; color: rgba(255,255,255,0.35);
+  }
+  .dash-body { padding: 16px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+  .kpi-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 12px;
+  }
+  .kpi-label { font-size: 9px; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
+  .kpi-value { font-size: 15px; font-weight: 700; color: #fff; }
+  .kpi-badge {
+    display: inline-block; font-size: 8px; padding: 1px 5px;
+    border-radius: 4px; margin-top: 3px; font-weight: 600;
+  }
+  .kpi-badge.up { background: rgba(13,159,110,0.15); color: #34d399; }
+  .kpi-badge.down { background: rgba(220,53,69,0.15); color: #f87171; }
+  .chart-area {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 12px; margin-bottom: 10px; height: 72px; overflow: hidden;
+  }
+  .chart-label { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 4px; height: 40px; }
+  .chart-bar { flex: 1; border-radius: 3px 3px 0 0; background: var(--accent); opacity: 0.4; }
+  .chart-bar:last-child { opacity: 1; }
+
+  /* ─── STATEMENT SECTION ─── */
+  .statement-section {
+    background: var(--bg); border-top: 1px solid var(--border);
+  }
+  .statement-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    padding: 96px 40px; text-align: center;
+  }
+  .statement-inner h2 {
+    font-size: clamp(26px, 3.2vw, 38px); font-weight: 800;
+    line-height: 1.5; margin-bottom: 24px; text-wrap: balance;
+  }
+  .statement-inner h2 span { display: block; }
+  .statement-inner h2 .statement-em {
+    color: var(--accent); font-size: clamp(20px, 2.4vw, 28px); font-weight: 600;
+  }
+  .statement-inner p {
+    font-size: 15px; color: var(--text-sub); line-height: 2;
+    max-width: 640px; margin: 0 auto 16px; text-wrap: pretty;
+  }
+  .statement-inner p em {
+    font-style: normal; color: var(--accent); font-weight: 600;
+  }
+  .statement-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 600; color: var(--accent);
+    margin-top: 8px; transition: gap 0.2s;
+  }
+  .statement-link:hover { gap: 10px; }
+
+  /* Before/After diagram */
+  .ba-section {
+    background: var(--bg-alt); border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .ba-inner {
+    max-width: 960px; margin: 0 auto; padding: 80px 40px;
+  }
+  .ba-heading {
+    text-align: center; margin-bottom: 48px;
+  }
+  .ba-heading-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .ba-heading h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    text-wrap: balance;
+  }
+  .ba-diagram {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch;
+  }
+  .ba-side {
+    border-radius: var(--radius-lg); padding: 36px 32px;
+  }
+  .ba-before { background: #fef2f2; border: 1px solid #fecaca; }
+  .ba-after { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .ba-side-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .ba-before .ba-side-label { color: var(--red); }
+  .ba-after .ba-side-label { color: var(--accent); }
+  .ba-side h3 {
+    font-size: 16px; font-weight: 700; margin-bottom: 20px; line-height: 1.5;
+  }
+  .ba-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; font-size: 14px; color: var(--text-sub);
+  }
+  .ba-step-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ba-before .ba-step-icon { background: #fee2e2; }
+  .ba-after .ba-step-icon { background: #dbeafe; }
+  .ba-arrow {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 20px; flex-shrink: 0;
+  }
+  .ba-bottom-note {
+    text-align: center; margin-top: 36px;
+    font-size: 14px; color: var(--text-sub); line-height: 1.8;
+  }
+  .ba-bottom-note strong {
+    color: var(--accent); font-weight: 700;
+  }
+
+  /* ─── POINT OVERVIEW ─── */
+  .points-overview {
+    max-width: var(--max-w); margin: 0 auto; padding: 96px 40px 48px;
+  }
+  .points-overview-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .points-overview h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 48px; text-wrap: balance;
+  }
+  .points-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; background: var(--bg);
+  }
+  .point-card {
+    padding: 28px 20px; border-right: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: background 0.15s;
+    display: flex; flex-direction: column;
+  }
+  .point-card:last-child { border-right: none; }
+  .point-card:hover { background: var(--accent-light); }
+  .point-num {
+    font-size: 28px; font-weight: 800; color: var(--accent);
+    margin-bottom: 12px; line-height: 1;
+  }
+  .point-card h3 {
+    font-size: 16px; font-weight: 700; line-height: 1.55;
+    flex: 1;
+  }
+  .point-card .point-arrow {
+    color: var(--accent); font-size: 18px; margin-top: 12px;
+  }
+
+  /* ─── POINT DETAIL ─── */
+  .point-detail {
+    max-width: 1200px; margin: 0 auto;
+    padding: 96px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .point-detail:last-of-type { border-bottom: none; }
+  .point-detail-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 72px; align-items: center;
+  }
+  .point-detail.reverse .point-detail-inner { direction: rtl; }
+  .point-detail.reverse .point-detail-inner > * { direction: ltr; }
+  .point-detail-num {
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .point-detail h3 {
+    font-size: clamp(22px, 2.5vw, 28px); font-weight: 700;
+    line-height: 1.45; margin-bottom: 16px; text-wrap: balance;
+  }
+  .point-detail p {
+    font-size: 15px; color: var(--text-sub); line-height: 2;
+    margin-bottom: 24px; text-wrap: pretty;
+  }
+  .point-detail-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 600; color: var(--accent);
+    text-decoration: none; transition: gap 0.2s;
+  }
+  .point-detail-link:hover { gap: 10px; }
+  .point-detail-visual {
+    border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .point-detail-visual img { width: 100%; display: block; }
+
+  /* Screen mock */
+  .screen-mock {
+    background: var(--bg-dark); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+  .screen-header {
+    background: #151929; padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .screen-dots { display: flex; gap: 5px; }
+  .screen-dots span { width: 8px; height: 8px; border-radius: 50%; }
+  .screen-dots span:nth-child(1) { background: #ff5f57; }
+  .screen-dots span:nth-child(2) { background: #febc2e; }
+  .screen-dots span:nth-child(3) { background: #28c840; }
+  .screen-tab {
+    font-size: 11px; color: rgba(255,255,255,0.5);
+    border-bottom: 2px solid var(--accent); padding-bottom: 2px;
+  }
+  .screen-body { padding: 20px; color: rgba(255,255,255,0.6); }
+
+  .csv-drop {
+    border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px;
+    padding: 40px; text-align: center; margin-bottom: 16px;
+  }
+  .csv-drop-text { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .match-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+  .match-stat {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 14px; text-align: center;
+  }
+  .match-stat-num { font-size: 24px; font-weight: 700; }
+  .match-stat-label { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .match-stat.good .match-stat-num { color: #34d399; }
+  .match-stat.warn .match-stat-num { color: #fbbf24; }
+  .match-stat.bad .match-stat-num { color: #f87171; }
+  .pl-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px;
+  }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-label { color: rgba(255,255,255,0.5); }
+  .pl-val { color: #fff; }
+  .pl-val.negative { color: #f87171; }
+  .pl-row.total { font-weight: 700; font-size: 15px; color: var(--accent); padding-top: 14px; }
+  .recurring-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; background: rgba(255,255,255,0.04);
+    border-radius: 8px; margin-bottom: 8px; font-size: 13px;
+  }
+  .recurring-name { color: rgba(255,255,255,0.5); }
+  .recurring-amount { color: var(--accent); font-weight: 700; }
+  .recurring-toggle {
+    width: 28px; height: 16px; background: var(--accent);
+    border-radius: 8px; position: relative;
+  }
+  .recurring-toggle::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    background: white; border-radius: 50%; top: 2px; right: 2px;
+  }
+
+  /* ─── MID CTA ─── */
+  .mid-cta {
+    background: var(--bg-alt); border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border); text-align: center;
+    padding: 64px 40px;
+  }
+  .mid-cta p {
+    font-size: 16px; color: var(--text-sub); margin-bottom: 24px;
+    line-height: 1.8; text-wrap: pretty;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff; border: none;
+    padding: 14px 36px; border-radius: 100px; font-size: 14px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background 0.15s, transform 0.15s;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+  /* ─── METRICS ─── */
+  .metrics-section {
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+  .metrics-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 72px 40px;
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; text-align: center;
+  }
+  .metric-num {
+    font-size: 44px; font-weight: 800; color: var(--accent);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .metric-label { font-size: 14px; color: var(--text-sub); line-height: 1.6; }
+
+  /* ─── WHO ─── */
+  .who-section { max-width: var(--max-w); margin: 0 auto; padding: 96px 40px; }
+  .who-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .who-section h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 48px; text-wrap: balance;
+  }
+  .who-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+  .who-card {
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 32px; transition: box-shadow 0.2s;
+  }
+  .who-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  .who-card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--accent-light); display: flex;
+    align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .who-card-icon svg { width: 24px; height: 24px; color: var(--accent); }
+  .who-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 12px; text-wrap: balance; }
+  .who-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; margin-bottom: 20px; text-wrap: pretty; }
+  .who-benefits { display: flex; flex-direction: column; gap: 6px; }
+  .who-benefit {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--text-sub);
+  }
+  .who-benefit svg { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }
+
+  /* ─── FAQ ─── */
+  .faq-section { background: var(--bg-alt); }
+  .faq-inner { max-width: var(--max-w); margin: 0 auto; padding: 96px 40px; }
+  .faq-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .faq-inner h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 48px; text-wrap: balance;
+  }
+  .faq-list { max-width: 720px; }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
+  .faq-q {
+    font-size: 15px; font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .faq-q::before {
+    content: 'Q'; color: #fff; background: var(--accent);
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .faq-a {
+    font-size: 14px; color: var(--text-sub); line-height: 1.9;
+    padding-left: 32px; text-wrap: pretty;
+  }
+  .faq-pricing {
+    padding-left: 32px; margin-top: 12px;
+  }
+  .faq-pricing-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .faq-pricing-table th {
+    background: var(--accent); color: #fff;
+    padding: 10px 16px; text-align: left; font-weight: 600;
+    font-size: 12px;
+  }
+  .faq-pricing-table td {
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    color: var(--text-sub);
+  }
+  .faq-pricing-table tr:last-child td { border-bottom: none; }
+  .faq-pricing-table .plan-name { font-weight: 600; color: var(--text); }
+  .faq-pricing-table .plan-price { font-weight: 700; color: var(--accent); font-size: 15px; }
+  .faq-pricing-note {
+    font-size: 12px; color: var(--text-light); margin-top: 8px;
+    padding-left: 32px;
+  }
+
+  /* ─── CONTACT FORM (Tally embed + visual) ─── */
+  .form-section {
+    background: var(--bg-dark); border-top: 1px solid var(--border);
+  }
+  .form-inner {
+    max-width: 1200px; margin: 0 auto; padding: 96px 40px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .form-visual-side {}
+  .form-visual-header {
+    margin-bottom: 32px;
+  }
+  .form-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .form-visual-header h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 12px; text-wrap: balance; color: #fff;
+  }
+  .form-visual-header p {
+    font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.8;
+  }
+  .form-dashboard {
+    position: relative;
+  }
+  .form-dashboard .dashboard-frame {
+    transform: none;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+  }
+  .form-dashboard .dashboard-frame:hover { transform: none; }
+  .form-side {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .form-side-header {
+    padding: 28px 32px 0;
+  }
+  .form-side-header h3 {
+    font-size: 20px; font-weight: 700; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .form-side-header p {
+    font-size: 13px; color: var(--text-light); line-height: 1.6;
+  }
+  .tally-embed {
+    min-height: 480px;
+  }
+  .tally-embed iframe {
+    display: block;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg-dark); color: rgba(255,255,255,0.45);
+    padding: 48px 40px;
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 48px;
+  }
+  .footer-logo { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .footer-logo span:first-child { color: var(--accent); }
+  .footer-desc { font-size: 13px; max-width: 300px; line-height: 1.7; }
+  .footer-links { display: flex; gap: 48px; }
+  .footer-col h4 { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 8px; transition: color 0.15s; }
+  .footer-col a:hover { color: #fff; }
+  .footer-bottom {
+    max-width: 1200px; margin: 32px auto 0; padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px; text-align: center;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .nav-inner { padding: 0 20px; }
+    .nav-menu { display: none; }
+
+    /* Hero mobile: visual-first, overlay card */
+    .hero { padding: 80px 0 40px; }
+    .hero-inner {
+      display: flex; flex-direction: column;
+      gap: 0;
+    }
+    .hero-visual {
+      order: -1;
+      padding: 16px 16px 0;
+      animation: heroVisualIn 0.7s ease both;
+    }
+    .dashboard-frame {
+      transform: none !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    }
+    .float-card { display: none; }
+    .hero-content {
+      position: relative; z-index: 2;
+      margin: -80px 12px 0;
+      background: rgba(255,255,255,0.90);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 2px solid rgba(255,255,255,0.95);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+      padding: 28px 24px;
+      animation: heroOverlayIn 0.7s ease 0.55s both;
+    }
+    .hero-content .hero-badge,
+    .hero-content .hero-title,
+    .hero-content .hero-sub,
+    .hero-content .hero-actions {
+      animation: none;
+    }
+    .hero-title { font-size: 28px; margin-bottom: 14px; }
+    .hero-sub { font-size: 13px; margin-bottom: 20px; }
+    .hero-actions { flex-direction: column; }
+    .hero-cta-primary, .btn-ghost {
+      width: 100%; justify-content: center; text-align: center;
+    }
+    .hero-trust { gap: 10px; }
+    .hero-trust-item { font-size: 11px; }
+
+    .ba-diagram { grid-template-columns: 1fr; gap: 16px; }
+    .ba-arrow { transform: rotate(90deg); padding: 12px 0; }
+    .points-grid { grid-template-columns: 1fr; }
+    .point-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .point-card:last-child { border-bottom: none; }
+    .point-detail-inner { grid-template-columns: 1fr; gap: 40px; }
+    .point-detail.reverse .point-detail-inner { direction: ltr; }
+    .metrics-inner { grid-template-columns: repeat(2,1fr); }
+    .who-cards { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; }
+    .footer-links { flex-wrap: wrap; gap: 32px; }
+    .faq-pricing-table { font-size: 12px; }
+    .faq-pricing-table th, .faq-pricing-table td { padding: 8px 10px; }
+    .form-inner { grid-template-columns: 1fr; gap: 40px; }
+    .form-dashboard { display: none; }
+    .form-visual-header { text-align: center; }
+    .points-overview, .point-detail, .who-section, .faq-inner,
+    .message-inner, .form-inner, .mid-cta, .metrics-inner,
+    .ba-inner { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" style="text-decoration:none;"><span>CF</span><span>Manager</span></a>
+    <div class="nav-menu">
+      <div class="nav-item has-dropdown">
+        サービス紹介
+        <div class="nav-dropdown">
+          <a href="#point-01">CSVインポート・自動分類</a>
+          <a href="#point-02">AI自動照合</a>
+          <a href="#point-03">PL分析・予実比較</a>
+          <a href="#point-04">定期支払・CF予測</a>
+          <a href="#point-05">安全設計・セキュリティ</a>
+        </div>
+      </div>
+      <a class="nav-item" href="#metrics">導入効果</a>
+      <a class="nav-item" href="#who">対象</a>
+      <a class="nav-item" href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta-wrap">
+      <a href="#contact-form" class="nav-cta" style="text-decoration:none;">資料請求</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- HERO — ビジュアルファースト + テキスト重なり     -->
+<!-- ============================================ -->
+<div class="hero">
+  <div class="hero-inner">
+  <!-- テキスト（PC: 左カラム / Mobile: オーバーレイカード） -->
+  <div class="hero-content">
+    <div class="hero-badge">経理AI自動化 SaaS</div>
+    <h1 class="hero-title">経理をAIで<br>次のステージへ</h1>
+    <p class="hero-sub">
+      銀行明細CSVをドラッグするだけ。<br>
+      照合・PL作成・CF予測が<strong style="color:var(--accent);">5分で自動完結</strong>。<br>
+      freee・マネフォには一切触れない安全設計。
+    </p>
+    <div class="hero-actions">
+      <a href="#contact-form" class="hero-cta-primary">資料請求（無料） →</a>
+    </div>
+    <p class="hero-note">30秒で入力完了 · 営業日1日以内にお届け</p>
+    <div class="hero-trust">
+      <div class="hero-trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        会計ソフト非接続
+      </div>
+      <div class="hero-trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        初期費用0円
+      </div>
+      <div class="hero-trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        最短5分で導入
+      </div>
+    </div>
+  </div>
+  <!-- ダッシュボードビジュアル（PC: 右カラム / Mobile: 先に表示） -->
+  <div class="hero-visual">
+    <!-- Floating feature cards -->
+    <div class="float-card fc-1">
+      <div class="fc-icon" style="background:#ecfdf5;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div>
+        <div>自動照合</div>
+        <div class="fc-sub">照合率 96.9%</div>
+      </div>
+    </div>
+    <div class="float-card fc-2">
+      <div class="fc-icon" style="background:var(--accent-light);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/></svg>
+      </div>
+      <div>
+        <div>PL自動生成</div>
+        <div class="fc-sub">部門別・月別</div>
+      </div>
+    </div>
+    <div class="float-card fc-3">
+      <div class="fc-icon" style="background:#fffbeb;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div>
+        <div>CF予測</div>
+        <div class="fc-sub">年間 ¥70.8M 見込</div>
+      </div>
+    </div>
+    <div class="float-card fc-4">
+      <div class="fc-icon" style="background:#f3f0ff;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div>
+        <div>安全設計</div>
+        <div class="fc-sub">会計ソフト非接続</div>
+      </div>
+    </div>
+
+    <!-- Main dashboard -->
+    <div class="dashboard-frame">
+      <div class="dash-header">
+        <div class="dash-dots"><span></span><span></span><span></span></div>
+        <div class="dash-title-bar">cfmanager.app — ダッシュボード</div>
+      </div>
+      <div class="dash-body">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-label">当月支出</div>
+            <div class="kpi-value">¥4,218,530</div>
+            <span class="kpi-badge up">▼ 12.3%</span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">照合率</div>
+            <div class="kpi-value">96.9%</div>
+            <span class="kpi-badge up">✓ 完了</span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">要確認</div>
+            <div class="kpi-value">12件</div>
+            <span class="kpi-badge down">残り</span>
+          </div>
+        </div>
+        <div class="chart-area" style="height:96px;">
+          <div class="chart-label">キャッシュフロー推移</div>
+          <div class="chart-bars" style="height:56px;">
+            <div class="chart-bar" style="height:30%"></div>
+            <div class="chart-bar" style="height:45%"></div>
+            <div class="chart-bar" style="height:35%"></div>
+            <div class="chart-bar" style="height:55%"></div>
+            <div class="chart-bar" style="height:75%"></div>
+            <div class="chart-bar" style="height:65%"></div>
+            <div class="chart-bar" style="height:85%"></div>
+            <div class="chart-bar" style="height:70%"></div>
+            <div class="chart-bar" style="height:95%"></div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;font-size:10px;">
+          <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span>地代家賃</span><span style="color:#34d399;">照合済</span><span>¥354,187</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span>USEN BUSINESS</span><span style="color:#34d399;">照合済</span><span>¥29,500</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;">
+            <span>MHFカクヤス</span><span style="color:#fbbf24;">要確認</span><span>¥304,940</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /hero-inner -->
+</div>
+
+<!-- BEFORE / AFTER -->
+<div class="ba-section">
+  <div class="ba-inner">
+    <div class="ba-heading">
+      <div class="ba-heading-label">Solution</div>
+      <h2>CFManagerが解決すること</h2>
+    </div>
+    <div class="ba-diagram">
+      <div class="ba-side ba-before">
+        <div class="ba-side-label">Before</div>
+        <h3>導入前の経理業務</h3>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          スプレッドシートで手動照合
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          月次レポート作成に20時間以上
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          月末まで数字が見えない
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          資金繰りの見通しが立たない
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          会計ソフト連携でデータ破損リスク
+        </div>
+      </div>
+      <div class="ba-arrow">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div class="ba-side ba-after">
+        <div class="ba-side-label">After</div>
+        <h3>CFManager導入後</h3>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          AIが96.9%を自動照合
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          月次レポートが5分で完成
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          リアルタイムでPL・数字を把握
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          CF予測で資金計画を可視化
+        </div>
+        <div class="ba-step">
+          <div class="ba-step-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          CSV取込のみ。公式ソフトに非接続
+        </div>
+      </div>
+    </div>
+    <div class="ba-bottom-note">
+      CSVをドラッグするだけで、<strong>経理業務を92%自動化</strong>できます。
+    </div>
+  </div>
+</div>
+
+<!-- POINT OVERVIEW -->
+<div class="points-overview" id="features">
+  <div class="points-overview-label">Point</div>
+  <h2>CFManager のポイント</h2>
+  <div class="points-grid">
+    <a href="#point-01" class="point-card">
+      <div class="point-num">01</div>
+      <h3>CSVインポートで即座にデータ取込</h3>
+      <div class="point-arrow">→</div>
+    </a>
+    <a href="#point-02" class="point-card">
+      <div class="point-num">02</div>
+      <h3>AIが予実を自動照合</h3>
+      <div class="point-arrow">→</div>
+    </a>
+    <a href="#point-03" class="point-card">
+      <div class="point-num">03</div>
+      <h3>損益計算書をリアルタイム自動生成</h3>
+      <div class="point-arrow">→</div>
+    </a>
+    <a href="#point-04" class="point-card">
+      <div class="point-num">04</div>
+      <h3>定期支払を自動検出しCFを予測</h3>
+      <div class="point-arrow">→</div>
+    </a>
+    <a href="#point-05" class="point-card">
+      <div class="point-num">05</div>
+      <h3>公式会計ソフトに一切触れない安全設計</h3>
+      <div class="point-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<!-- POINT 01 -->
+<div class="point-detail" id="point-01">
+  <div class="point-detail-inner">
+    <div>
+      <div class="point-detail-num">POINT 01</div>
+      <h3>ドラッグ＆ドロップで<br>CSVを即座に取込</h3>
+      <p>
+        銀行口座・クレジットカードの明細CSVをドラッグするだけ。<br>
+        AIがフォーマットを自動判定し、勘定科目を分類。<br>
+        freee・マネフォに一切アクセスしないため、<br>
+        データ破損のリスクがゼロです。
+      </p>
+      <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
+    </div>
+    <div class="screen-mock">
+      <div class="screen-header">
+        <div class="screen-dots"><span></span><span></span><span></span></div>
+        <div class="screen-tab">インポート</div>
+      </div>
+      <div class="screen-body">
+        <div class="csv-drop">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="csv-drop-text" style="margin-top:12px;">CSVファイルをドラッグ＆ドロップ<br><span style="color:var(--accent); font-size:11px; display:block; margin-top:4px;">またはクリックしてファイルを選択</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
+            <div style="color:var(--accent); font-size:12px;">口座明細</div>
+            <div style="color:rgba(255,255,255,0.3); font-size:10px;">取込種別</div>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
+            <div style="color:var(--accent); font-size:12px;">自動判定</div>
+            <div style="color:rgba(255,255,255,0.3); font-size:10px;">AIマッピング</div>
+          </div>
+          <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
+            <div style="color:var(--accent); font-size:12px;">全部門</div>
+            <div style="color:rgba(255,255,255,0.3); font-size:10px;">部門フィルタ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POINT 02 -->
+<div class="point-detail reverse" id="point-02">
+  <div class="point-detail-inner">
+    <div>
+      <div class="point-detail-num">POINT 02</div>
+      <h3>AIが予測と実績を<br>自動マッチング</h3>
+      <p>
+        定期支払いのパターンをAIが学習し、<br>
+        取引履歴から自動で照合。<br>
+        手動確認が必要なのは「要確認」フラグのものだけ。<br>
+        照合作業が最大92%削減されます。
+      </p>
+      <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
+    </div>
+    <div class="screen-mock">
+      <div class="screen-header">
+        <div class="screen-dots"><span></span><span></span><span></span></div>
+        <div class="screen-tab">照合管理</div>
+      </div>
+      <div class="screen-body">
+        <div class="match-stat-row">
+          <div class="match-stat good"><div class="match-stat-num">384</div><div class="match-stat-label">照合済</div></div>
+          <div class="match-stat warn"><div class="match-stat-num">8</div><div class="match-stat-label">要確認</div></div>
+          <div class="match-stat bad"><div class="match-stat-num">4</div><div class="match-stat-label">未照合</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; font-size:12px;">
+          <div style="color:rgba(255,255,255,0.3); font-size:10px; margin-bottom:10px;">照合結果一覧</div>
+          <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span>USEN BUSINESS DE</span><span style="color:#34d399;">¥29,500</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span>地代家賃</span><span style="color:#34d399;">¥354,187</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:6px 0;">
+            <span>MHFカクヤス</span><span style="color:#fbbf24;">¥304,940</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POINT 03 -->
+<div class="point-detail" id="point-03">
+  <div class="point-detail-inner">
+    <div>
+      <div class="point-detail-num">POINT 03</div>
+      <h3>損益計算書が<br>リアルタイムで自動生成</h3>
+      <p>
+        部門別・月別のPL（損益計算書）をリアルタイムで自動生成。<br>
+        予測と実績の差異・達成率をひと目で確認。<br>
+        経営陣への報告がワンクリックで完了します。
+      </p>
+      <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
+    </div>
+    <div class="screen-mock">
+      <div class="screen-header">
+        <div class="screen-dots"><span></span><span></span><span></span></div>
+        <div class="screen-tab">PL分析</div>
+      </div>
+      <div class="screen-body">
+        <div style="font-size:11px; color:rgba(255,255,255,0.3); margin-bottom:14px;">損益計算書（予実対比）— 2026年3月</div>
+        <div class="pl-row"><span class="pl-label">売上高</span><span class="pl-val">¥9,750,200</span></div>
+        <div class="pl-row"><span class="pl-label">売上原価</span><span class="pl-val negative">¥-3,280,000</span></div>
+        <div class="pl-row"><span class="pl-label">販管費</span><span class="pl-val negative">¥-4,120,430</span></div>
+        <div class="pl-row"><span class="pl-label">地代家賃</span><span class="pl-val negative">¥-708,374</span></div>
+        <div class="pl-row"><span class="pl-label">通信費</span><span class="pl-val negative">¥-5,614</span></div>
+        <div class="pl-row total"><span>営業利益</span><span>¥1,635,782</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POINT 04 -->
+<div class="point-detail reverse" id="point-04">
+  <div class="point-detail-inner">
+    <div>
+      <div class="point-detail-num">POINT 04</div>
+      <h3>固定費を自動検出し<br>キャッシュフローを予測</h3>
+      <p>
+        取引履歴から定期支払いを自動で検出し、<br>
+        将来のキャッシュフローを予測。<br>
+        「今月末に資金が足りるか」を<br>
+        月次締め前に把握できます。
+      </p>
+      <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
+    </div>
+    <div class="screen-mock">
+      <div class="screen-header">
+        <div class="screen-dots"><span></span><span></span><span></span></div>
+        <div class="screen-tab">定期支払管理</div>
+      </div>
+      <div class="screen-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px;">
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; text-align:center;">
+            <div style="font-size:10px; color:rgba(255,255,255,0.4);">月額合計</div>
+            <div style="font-size:18px; font-weight:700; color:#fff;">¥5.9M</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; text-align:center;">
+            <div style="font-size:10px; color:rgba(255,255,255,0.4);">登録件数</div>
+            <div style="font-size:18px; font-weight:700; color:#fff;">9件</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; text-align:center;">
+            <div style="font-size:10px; color:rgba(255,255,255,0.4);">年間見込</div>
+            <div style="font-size:18px; font-weight:700; color:var(--accent);">¥70.8M</div>
+          </div>
+        </div>
+        <div class="recurring-item">
+          <div><div class="recurring-toggle"></div></div>
+          <span class="recurring-name">地代家賃</span>
+          <span style="font-size:10px; color:rgba(255,255,255,0.3);">毎月26日</span>
+          <span class="recurring-amount">¥354,187</span>
+        </div>
+        <div class="recurring-item">
+          <div><div class="recurring-toggle"></div></div>
+          <span class="recurring-name">USEN</span>
+          <span style="font-size:10px; color:rgba(255,255,255,0.3);">毎月28日</span>
+          <span class="recurring-amount">¥29,500</span>
+        </div>
+        <div class="recurring-item">
+          <div><div class="recurring-toggle"></div></div>
+          <span class="recurring-name">AWS利用料</span>
+          <span style="font-size:10px; color:rgba(255,255,255,0.3);">毎月3日</span>
+          <span class="recurring-amount">¥82,400</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POINT 05 -->
+<div class="point-detail" id="point-05">
+  <div class="point-detail-inner">
+    <div>
+      <div class="point-detail-num">POINT 05</div>
+      <h3>公式会計ソフトに一切触れない<br>安全設計</h3>
+      <p>
+        CFManagerはfreee・マネーフォワードの「外側」で動きます。<br>
+        CSVのみを取り込む設計のため、<br>
+        公式会計ソフトのデータに一切接触しません。<br>
+        税理士が使う環境を壊す心配がゼロです。
+      </p>
+      <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
+    </div>
+    <div style="background:var(--accent-light); border-radius:var(--radius-lg); padding:48px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:32px;">
+      <div style="display:flex; align-items:center; gap:24px;">
+        <div style="background:#fff; border-radius:12px; padding:20px 28px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid var(--border);">
+          <div style="font-size:12px; color:var(--text-light); margin-bottom:4px;">公式会計ソフト</div>
+          <div style="font-size:15px; font-weight:600;">freee / マネフォ</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <div style="font-size:10px; color:var(--red); font-weight:600;">非接続</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:20px 28px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid var(--border);">
+          <div style="font-size:12px; color:var(--text-light); margin-bottom:4px;">CFManager</div>
+          <div style="font-size:15px; font-weight:600; color:var(--accent);">CSV取込のみ</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:16px;">
+        <div style="background:#fff; border-radius:100px; padding:8px 20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          データ暗号化保存
+        </div>
+        <div style="background:#fff; border-radius:100px; padding:8px 20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          API接続なし
+        </div>
+        <div style="background:#fff; border-radius:100px; padding:8px 20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          読み取り専用設計
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MID CTA -->
+<div class="mid-cta">
+  <p>導入に関してご不明な点がございましたら<br>お気軽にお問い合わせください</p>
+  <a href="#contact-form" class="btn-primary">資料請求（無料）</a>
+</div>
+
+<!-- METRICS -->
+<div id="metrics" class="metrics-section">
+  <div class="metrics-inner">
+    <div><div class="metric-num">92%</div><div class="metric-label">照合作業の<br>時間削減</div></div>
+    <div><div class="metric-num">5分</div><div class="metric-label">月次レポートの<br>作成時間</div></div>
+    <div><div class="metric-num">0件</div><div class="metric-label">公式会計ソフトへの<br>アクセス</div></div>
+    <div><div class="metric-num">即日</div><div class="metric-label">CSV取込から<br>利用開始まで</div></div>
+  </div>
+</div>
+
+<!-- WHO -->
+<div class="who-section" id="who">
+  <div class="who-label">For Who</div>
+  <h2>こんな方のためのツールです</h2>
+  <div class="who-cards">
+    <div class="who-card">
+      <div class="who-card-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+      </div>
+      <h3>「毎月のレポート作成から解放されたい」</h3>
+      <p>100〜300名規模の企業で、月次レポートや予実管理をスプレッドシートで対応している経理担当者の方。</p>
+      <div class="who-benefits">
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>スプレッドシートの管理・更新作業がゼロに</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>照合作業がボタン一つで完了</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>レポート作成が月20時間 → 5分に</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>公式ソフトのデータを壊す心配なし</div>
+      </div>
+    </div>
+    <div class="who-card">
+      <div class="who-card-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <h3>「今月の数字をリアルタイムで見たい」</h3>
+      <p>月末の集計を待たずに、今の会社の財務状況を把握したい経営層・管理職の方。</p>
+      <div class="who-benefits">
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>月末を待たずリアルタイムでPL確認</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>キャッシュフロー予測で資金計画が明確に</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>部門別・科目別で詳細分析が可能</div>
+        <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>経営判断のスピードが大幅に向上</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="faq-label">FAQ</div>
+    <h2>よくある質問</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">料金はいくらですか？</div>
+        <div class="faq-a">以下の3プランをご用意しています。すべてのプランに14日間の無料トライアルが付きます。</div>
+        <div class="faq-pricing">
+          <table class="faq-pricing-table">
+            <thead>
+              <tr>
+                <th>プラン</th>
+                <th>月額料金（税抜）</th>
+                <th>対象</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="plan-name">スターター</td>
+                <td class="plan-price">¥9,800 /月</td>
+                <td>1〜3口座 / 月500件まで</td>
+              </tr>
+              <tr>
+                <td class="plan-name">スタンダード</td>
+                <td class="plan-price">¥29,800 /月</td>
+                <td>10口座 / 月3,000件まで / PL分析・CF予測付</td>
+              </tr>
+              <tr>
+                <td class="plan-name">エンタープライズ</td>
+                <td class="plan-price">要お問い合わせ</td>
+                <td>口座数無制限 / 専任サポート / SLA対応</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="faq-pricing-note">※ 年間契約の場合、月額料金が20%オフになります。初期費用・解約手数料は一切かかりません。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">freee・マネーフォワードと連携しますか？</div>
+        <div class="faq-a">いいえ、連携しません。CFManagerは銀行・クレカの口座明細CSVを取り込む設計です。公式会計ソフトのAPIやデータには一切アクセスしないため、既存の会計環境を壊す心配が全くありません。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">どんな銀行・カードのCSVに対応していますか？</div>
+        <div class="faq-a">三菱UFJ・三井住友・みずほ・楽天・ゆうちょ等の主要銀行、および主要クレジットカード会社のCSVフォーマットに対応しています。自動判定機能でフォーマットを識別します。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">セキュリティ面は大丈夫ですか？</div>
+        <div class="faq-a">データは暗号化して保存されます。CSVのみを取り込む設計のため、銀行口座への直接アクセスや公式会計ソフトへのアクセスは行いません。社内の重要データに接触する面積を最小化しています。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">導入にシステム知識は必要ですか？</div>
+        <div class="faq-a">不要です。CSVファイルをドラッグ＆ドロップするだけで即日利用開始できます。複雑な設定や初期費用もありません。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">複数部門・複数口座に対応していますか？</div>
+        <div class="faq-a">はい、対応しています。部門フィルタ機能で「全部門」「営業部」など部門別の分析が可能です。複数の銀行口座・カードのCSVをまとめて取り込むことができます。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">無料トライアル中に解約できますか？</div>
+        <div class="faq-a">はい、14日間の無料トライアル中はいつでも解約可能です。トライアル期間中は一切課金されません。クレジットカードの登録も不要です。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT FORM (2-col: visual + Tally) -->
+<div id="contact-form" class="form-section">
+  <div class="form-inner">
+    <!-- 左: ビジュアル -->
+    <div class="form-visual-side">
+      <div class="form-visual-header">
+        <div class="form-label">Document Request</div>
+        <h2>無料で資料を請求する</h2>
+        <p>CFManagerの詳細資料をお送りします。<br>お気軽にご請求ください。</p>
+      </div>
+      <div class="form-dashboard">
+        <div class="dashboard-frame">
+          <div class="dash-header">
+            <div class="dash-dots"><span></span><span></span><span></span></div>
+            <div class="dash-title-bar">cfmanager.app — ダッシュボード</div>
+          </div>
+          <div class="dash-body">
+            <div class="kpi-row">
+              <div class="kpi-card">
+                <div class="kpi-label">当月支出</div>
+                <div class="kpi-value">¥4,218,530</div>
+                <span class="kpi-badge up">▼ 12.3%</span>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">照合率</div>
+                <div class="kpi-value">96.9%</div>
+                <span class="kpi-badge up">✓ 完了</span>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">要確認</div>
+                <div class="kpi-value">12件</div>
+                <span class="kpi-badge down">残り</span>
+              </div>
+            </div>
+            <div class="chart-area" style="height:96px;">
+              <div class="chart-label">キャッシュフロー推移</div>
+              <div class="chart-bars" style="height:56px;">
+                <div class="chart-bar" style="height:30%"></div>
+                <div class="chart-bar" style="height:45%"></div>
+                <div class="chart-bar" style="height:35%"></div>
+                <div class="chart-bar" style="height:55%"></div>
+                <div class="chart-bar" style="height:75%"></div>
+                <div class="chart-bar" style="height:65%"></div>
+                <div class="chart-bar" style="height:85%"></div>
+                <div class="chart-bar" style="height:70%"></div>
+                <div class="chart-bar" style="height:95%"></div>
+              </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px;font-size:10px;">
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span>地代家賃</span><span style="color:#34d399;">照合済</span><span>¥354,187</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span>USEN BUSINESS</span><span style="color:#34d399;">照合済</span><span>¥29,500</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.5);padding:5px 0;">
+                <span>MHFカクヤス</span><span style="color:#fbbf24;">要確認</span><span>¥304,940</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 右: Tallyフォーム -->
+    <div class="form-side">
+      <div class="form-side-header">
+        <h3>資料請求フォーム</h3>
+        <p>必要事項をご入力ください</p>
+      </div>
+      <div class="tally-embed">
+        <iframe data-tally-src="https://tally.so/r/Ek12GL?transparentBackground=1&hideTitle=1" width="100%" height="480" frameborder="0" marginheight="0" marginwidth="0" title="（CFManager）資料請求用フォーム" style="border:0;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo"><span>CF</span><span>Manager</span></div>
+      <p class="footer-desc">銀行明細CSVを取り込むだけで、経理のあらゆる業務をシンプルにする経理AI自動化SaaS。</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>サービス</h4>
+        <a href="#point-01">CSVインポート</a>
+        <a href="#point-02">AI自動照合</a>
+        <a href="#point-03">PL分析</a>
+        <a href="#point-04">CF予測</a>
+        <a href="#point-05">セキュリティ</a>
+      </div>
+      <div class="footer-col">
+        <h4>サポート</h4>
+        <a href="#faq">FAQ</a>
+        <a href="#contact-form">お問い合わせ</a>
+        <a href="#contact-form">資料請求</a>
+      </div>
+      <div class="footer-col">
+        <h4>会社情報</h4>
+        <a href="./company.html">運営会社</a>
+        <a href="./privacy.html">プライバシーポリシー</a>
+        <a href="./terms.html">利用規約</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2026 株式会社Bewibe. All rights reserved.</div>
+</footer>
+
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
