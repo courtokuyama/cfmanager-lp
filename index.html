@@ -1024,20 +1024,11 @@
     0%, 100% { box-shadow: 0 4px 20px rgba(37,99,235,0.3); }
     50% { box-shadow: 0 4px 32px rgba(37,99,235,0.6); }
   }
-  .demo-overlay {
-    display: none; position: absolute; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 10;
-    border-radius: var(--radius-lg);
-    animation: overlayIn 0.4s ease both;
-  }
-  .demo-overlay.visible { display: block; }
-  @keyframes overlayIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .demo-box { position: relative; }
-  .demo-btn-area { position: relative; z-index: 20; }
-  .demo-stepper { position: relative; z-index: 20; }
+  .demo-box.waiting .demo-stepper { opacity: 0.2; transition: opacity 0.4s; }
+  .demo-box.waiting .demo-panel > *:not(.demo-btn-area) { opacity: 0.12; transition: opacity 0.4s; }
+  .demo-box.waiting .demo-btn-area { opacity: 1; }
+  .demo-box:not(.waiting) .demo-stepper,
+  .demo-box:not(.waiting) .demo-panel > * { transition: opacity 0.4s; }
   .demo-btn-reset {
     background: transparent; color: var(--text-sub); border: 1px solid var(--border);
     padding: 12px 28px; border-radius: 100px; font-size: 14px; font-weight: 500;
@@ -1599,7 +1590,6 @@
     <h2>CSVを入れてから、5分で完結する</h2>
     <p style="font-size:15px; color:var(--text-sub); line-height:1.9; margin-bottom:36px; max-width:640px;">下のデモを操作して、実際の流れを体験できます。<br>CSV取込 → AI自動照合 → レポート完成まで、わずか3ステップです。</p>
     <div class="demo-box">
-      <div class="demo-overlay" id="demo-overlay"></div>
       <div class="demo-stepper">
         <div class="demo-step-node active" data-step="1">1</div>
         <span class="demo-step-lbl active" data-step="1">CSV取込</span>
@@ -1952,16 +1942,16 @@
 
   function goTo(s){
     step=s;updateStepper(s);showPanel(s);
-    if(s<3&&!running){showOverlay();}
+    if(s<3&&!running){showWaiting();}
   }
 
   function hideHint(panel){
     var h=panel.querySelector('.demo-btn-hint');if(h)h.style.display='none';
     var b=panel.querySelector('.demo-btn-pulse');if(b)b.classList.add('no-pulse');
-    var ov=$('#demo-overlay');if(ov)ov.classList.remove('visible');
+    var box=$('.demo-box');if(box)box.classList.remove('waiting');
   }
-  function showOverlay(){
-    var ov=$('#demo-overlay');if(ov)ov.classList.add('visible');
+  function showWaiting(){
+    var box=$('.demo-box');if(box)box.classList.add('waiting');
   }
 
   function runStep1(){
@@ -1984,7 +1974,7 @@
     setTimeout(function(){
       running=false;btn.textContent='次へ \u2192';btn.disabled=false;
       btn.classList.remove('no-pulse');btn.classList.add('demo-btn-pulse');
-      showOverlay();
+      showWaiting();
       btn.onclick=function(){goTo(2)};
     },2800);
   }
@@ -2023,7 +2013,7 @@
     setTimeout(function(){
       running=false;btn.textContent='\u6B21\u3078 \u2192';btn.disabled=false;
       btn.classList.remove('no-pulse');btn.classList.add('demo-btn-pulse');
-      showOverlay();
+      showWaiting();
       btn.onclick=function(){goTo(3)};
     },450*12+300);
   }
@@ -2046,7 +2036,7 @@
     var h2=$('.demo-panel[data-step="2"] .demo-btn-hint');if(h2)h2.style.display='';
     autoStarted=false;
     showPanel(1);
-    showOverlay();
+    showWaiting();
   }
 
   var autoStarted=false;
@@ -2054,7 +2044,7 @@
     $('#demo-btn-1').onclick=runStep1;
     $('#demo-btn-2').onclick=runStep2;
     $('#demo-btn-reset').onclick=resetDemo;
-    goTo(1);showOverlay();
+    goTo(1);showWaiting();
     if('IntersectionObserver' in window){
       var obs=new IntersectionObserver(function(entries){
         entries.forEach(function(e){
