@@ -1123,7 +1123,7 @@
       <div class="nav-item has-dropdown">
         サービス紹介
         <div class="nav-dropdown">
-          <a href="#point-01">CSV・APIデータ取込</a>
+          <a href="#point-01">freee・マネフォAPI連携</a>
           <a href="#point-02">AI自動照合</a>
           <a href="#point-03">PL分析・予実比較</a>
           <a href="#point-04">定期支払・CF予測</a>
@@ -1400,7 +1400,7 @@
   <div class="points-grid">
     <a href="#point-01" class="point-card">
       <div class="point-num">01</div>
-      <h3>CSV・APIで即座にデータ取込</h3>
+      <h3>freee・マネフォAPI連携＋CSV対応</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-02" class="point-card">
@@ -1431,11 +1431,11 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 01</div>
-      <h3>CSV＋APIで<br>データを即座に取込</h3>
+      <h3>freee・マネフォからAPI自動取得<br>＋ CSVにも対応</h3>
       <p>
-        銀行口座・クレジットカードのCSVインポートに加え、<br>
-        freee・マネフォからAPIで自動取得にも対応。<br>
-        読み取り専用のため公式データには一切影響なし。<br>
+        freee・マネーフォワードから読み取り専用APIでデータを自動取得。<br>
+        銀行口座・クレジットカードのCSVインポートにも対応。<br>
+        公式データには一切書き込まないため影響ゼロ。<br>
         AIがフォーマットを自動判定し、勘定科目を分類します。
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
@@ -1443,16 +1443,24 @@
     <div class="screen-mock">
       <div class="screen-header">
         <div class="screen-dots"><span></span><span></span><span></span></div>
-        <div class="screen-tab">インポート</div>
+        <div class="screen-tab">データ連携</div>
       </div>
       <div class="screen-body">
-        <div class="csv-drop">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <div class="csv-drop-text" style="margin-top:12px;">CSVファイルをドラッグ＆ドロップ<br><span style="color:var(--accent); font-size:11px; display:block; margin-top:4px;">またはクリックしてファイルを選択</span></div>
+        <!-- API connections -->
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+          <div style="width:28px; height:28px; border-radius:7px; background:#7F57F1; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="color:#fff; font-size:11px; font-weight:800;">f</span></div>
+          <div style="flex:1;"><div style="color:#fff; font-size:12px; font-weight:600;">freee</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">読み取り専用API</div></div>
+          <div style="font-size:9px; color:#34d399; font-weight:600;">● 接続済</div>
         </div>
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:10px 14px; margin-bottom:12px;">
+          <div style="width:28px; height:28px; border-radius:7px; background:#3B82F6; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="color:#fff; font-size:10px; font-weight:800;">MF</span></div>
+          <div style="flex:1;"><div style="color:#fff; font-size:12px; font-weight:600;">マネーフォワード</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">読み取り専用API</div></div>
+          <div style="font-size:9px; color:#34d399; font-weight:600;">● 接続済</div>
+        </div>
+        <!-- Stats row -->
         <div style="display:flex; gap:8px;">
           <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
-            <div style="color:var(--accent); font-size:12px;">CSV / API</div>
+            <div style="color:var(--accent); font-size:12px;">API + CSV</div>
             <div style="color:rgba(255,255,255,0.3); font-size:10px;">取込方法</div>
           </div>
           <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
@@ -1460,8 +1468,8 @@
             <div style="color:rgba(255,255,255,0.3); font-size:10px;">AIマッピング</div>
           </div>
           <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
-            <div style="color:var(--accent); font-size:12px;">全部門</div>
-            <div style="color:rgba(255,255,255,0.3); font-size:10px;">部門フィルタ</div>
+            <div style="color:#34d399; font-size:12px;">書込なし</div>
+            <div style="color:rgba(255,255,255,0.3); font-size:10px;">安全設計</div>
           </div>
         </div>
       </div>
@@ -1705,73 +1713,63 @@
         <div class="demo-step-node" data-step="3">3</div>
         <span class="demo-step-lbl" data-step="3">レポート完成</span>
       </div>
-      <!-- Step 1: データ取込 -->
+      <!-- Step 1: データ取込 (API + CSV) -->
       <div class="demo-panel visible" data-step="1">
         <div class="demo-s1-grid">
+          <!-- 左: 取込ソース -->
           <div>
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
-              <div style="flex:1; background:var(--accent); color:#fff; border-radius:100px; padding:6px 0; text-align:center; font-size:12px; font-weight:600; cursor:pointer;" id="demo-tab-api">API自動取得</div>
-              <div style="flex:1; background:var(--bg-alt); color:var(--text-sub); border-radius:100px; padding:6px 0; text-align:center; font-size:12px; font-weight:500; cursor:pointer;" id="demo-tab-csv">CSV取込</div>
-            </div>
-            <div id="demo-import-api">
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="display:flex; align-items:center; gap:12px; background:var(--bg-alt); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px;">
-                  <div style="width:32px; height:32px; border-radius:8px; background:#7F57F1; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <span style="color:#fff; font-size:12px; font-weight:800;">f</span>
-                  </div>
-                  <div style="flex:1;">
-                    <div style="font-size:13px; font-weight:600;">freee</div>
-                    <div style="font-size:11px; color:var(--text-light);">読み取り専用API</div>
-                  </div>
-                  <div style="background:#dcfce7; color:#15803d; font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px;">接続済</div>
-                </div>
-                <div style="display:flex; align-items:center; gap:12px; background:var(--bg-alt); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px;">
-                  <div style="width:32px; height:32px; border-radius:8px; background:#3B82F6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <span style="color:#fff; font-size:11px; font-weight:800;">MF</span>
-                  </div>
-                  <div style="flex:1;">
-                    <div style="font-size:13px; font-weight:600;">マネーフォワード</div>
-                    <div style="font-size:11px; color:var(--text-light);">読み取り専用API</div>
-                  </div>
-                  <div style="background:#dcfce7; color:#15803d; font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px;">接続済</div>
-                </div>
+            <!-- API連携（メイン） -->
+            <div style="font-size:11px; font-weight:700; color:var(--accent); letter-spacing:1px; margin-bottom:8px;">API連携（読み取り専用）</div>
+            <div class="api-card" id="api-card-freee" style="display:flex; align-items:center; gap:12px; background:var(--bg-alt); border:2px solid var(--border); border-radius:var(--radius); padding:14px 16px; margin-bottom:8px; transition:border-color .3s, box-shadow .3s;">
+              <div style="width:36px; height:36px; border-radius:10px; background:#7F57F1; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="color:#fff; font-size:14px; font-weight:800;">f</span>
               </div>
-              <div style="margin-top:10px; font-size:11px; color:var(--text-light); display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                書き込み一切なし。公式データに影響しません。
+              <div style="flex:1;">
+                <div style="font-size:14px; font-weight:700;">freee</div>
+                <div style="font-size:11px; color:var(--text-light);">仕訳・口座データを自動取得</div>
+              </div>
+              <div class="api-status" style="font-size:10px; font-weight:600; padding:4px 12px; border-radius:100px; background:#e0e7ff; color:var(--accent); transition:all .3s;">待機中</div>
+            </div>
+            <div class="api-card" id="api-card-mf" style="display:flex; align-items:center; gap:12px; background:var(--bg-alt); border:2px solid var(--border); border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; transition:border-color .3s, box-shadow .3s;">
+              <div style="width:36px; height:36px; border-radius:10px; background:#3B82F6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="color:#fff; font-size:12px; font-weight:800;">MF</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:14px; font-weight:700;">マネーフォワード</div>
+                <div style="font-size:11px; color:var(--text-light);">明細・勘定科目を自動取得</div>
+              </div>
+              <div class="api-status" style="font-size:10px; font-weight:600; padding:4px 12px; border-radius:100px; background:#e0e7ff; color:var(--accent); transition:all .3s;">待機中</div>
+            </div>
+            <!-- CSV補助 -->
+            <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-alt); border:1px dashed var(--border); border-radius:var(--radius); margin-bottom:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div style="flex:1;">
+                <div style="font-size:12px; font-weight:600; color:var(--text-sub);">CSVインポートにも対応</div>
+                <div style="font-size:10px; color:var(--text-light);">三菱UFJ・三井住友・みずほ・楽天 他</div>
               </div>
             </div>
-            <div id="demo-import-csv" style="display:none;">
-              <div class="demo-dropzone">
-                <div class="demo-dropzone-icon">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                </div>
-                <div class="demo-dropzone-text">CSVファイルをドラッグ＆ドロップ<br><strong>またはクリックしてファイルを選択</strong></div>
-              </div>
-              <div class="demo-banks">
-                <span class="demo-bank">三菱UFJ</span>
-                <span class="demo-bank">三井住友</span>
-                <span class="demo-bank">楽天銀行</span>
-                <span class="demo-bank">みずほ</span>
-              </div>
+            <div style="font-size:10px; color:var(--text-light); display:flex; align-items:center; gap:5px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              書き込み一切なし — 公式データに影響しません
             </div>
           </div>
+          <!-- 右: 取得結果リスト -->
           <div class="demo-filelist">
-            <div style="font-size:11px; color:var(--text-light); font-weight:600; margin-bottom:8px; letter-spacing:0.5px;">取得データ</div>
-            <div class="demo-fileitem">
-              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7F57F1" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              freee — 仕訳データ 2026/03
-              <span class="demo-fileitem-size">API</span>
+            <div style="font-size:11px; color:var(--text-light); font-weight:600; margin-bottom:8px; letter-spacing:0.5px;">取得結果</div>
+            <div class="demo-fileitem" data-source="api">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7F57F1" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+              freee 仕訳データ（483件）
+              <span class="demo-fileitem-size" style="background:#f3f0ff; color:#7F57F1;">API</span>
             </div>
-            <div class="demo-fileitem">
-              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              MF — 口座明細 2026/03
-              <span class="demo-fileitem-size">API</span>
+            <div class="demo-fileitem" data-source="api">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+              MF 口座明細（413件）
+              <span class="demo-fileitem-size" style="background:#eff6ff; color:#3B82F6;">API</span>
             </div>
-            <div class="demo-fileitem">
+            <div class="demo-fileitem" data-source="csv">
               <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              mufg_2026_03.csv
-              <span class="demo-fileitem-size">127 KB</span>
+              mufg_2026_03.csv（122行）
+              <span class="demo-fileitem-size">CSV</span>
             </div>
           </div>
         </div>
@@ -2334,25 +2332,37 @@
     if(vp){var h=vp.querySelector('.demo-btn-hint');if(h)h.style.display='';}
   }
 
+  function setApiStatus(card,text,bg,color,borderColor){
+    var s=card.querySelector('.api-status');
+    s.textContent=text;s.style.background=bg;s.style.color=color;
+    card.style.borderColor=borderColor;card.style.boxShadow=borderColor!=='var(--border)'?'0 0 0 3px '+borderColor+'33':'none';
+  }
   function runStep1(){
     if(running)return;running=true;
     hideHint($('.demo-panel[data-step="1"]'));
     var btn=$('#demo-btn-1');btn.disabled=true;
+    var freeeCard=$('#api-card-freee'),mfCard=$('#api-card-mf');
     var files=$$('.demo-fileitem');
-    var dz=document.querySelector('#demo-import-csv .demo-dropzone');
-    var banks=$$('.demo-bank');
-    if(dz){dz.classList.add('importing');}
-    files.forEach(function(f,i){
-      setTimeout(function(){
-        f.classList.add('show');
-        if(banks[i])banks[i].classList.add('recognized');
-      },600*(i+1));
-    });
+    /* Phase 1: freee API sync */
     setTimeout(function(){
-      if(banks[3])banks[3].classList.add('recognized');
-      if(dz){dz.classList.remove('importing');dz.classList.add('done');
-        dz.querySelector('.demo-dropzone-text').innerHTML='<strong style="color:var(--green)">取込完了</strong><br>3ファイル・1,018行を読み込みました';}
-    },2400);
+      setApiStatus(freeeCard,'同期中…','#fef3c7','#92400e','#f59e0b');
+    },300);
+    /* Phase 2: freee done + MF sync */
+    setTimeout(function(){
+      setApiStatus(freeeCard,'取得完了','#dcfce7','#15803d','#22c55e');
+      files[0].classList.add('show');
+      setApiStatus(mfCard,'同期中…','#fef3c7','#92400e','#f59e0b');
+    },1200);
+    /* Phase 3: MF done */
+    setTimeout(function(){
+      setApiStatus(mfCard,'取得完了','#dcfce7','#15803d','#22c55e');
+      files[1].classList.add('show');
+    },2000);
+    /* Phase 4: CSV item */
+    setTimeout(function(){
+      files[2].classList.add('show');
+    },2500);
+    /* Phase 5: Done */
     setTimeout(function(){
       running=false;btn.textContent='次へ \u2192';btn.disabled=false;
       btn.classList.remove('no-pulse');btn.classList.add('demo-btn-pulse');
@@ -2360,7 +2370,7 @@
       if(h){h.style.display='flex';h.textContent='\u2193 \u6B21\u3078\u9032\u3080';}
       showWaiting();
       btn.onclick=function(){goTo(2)};
-    },2800);
+    },3000);
   }
 
   function runStep2(){
@@ -2406,11 +2416,11 @@
 
   function resetDemo(){
     running=false;step=1;updateStepper(1);
-    var dz=document.querySelector('#demo-import-csv .demo-dropzone');
-    if(dz){dz.className='demo-dropzone';
-      dz.querySelector('.demo-dropzone-text').innerHTML='CSV\u30D5\u30A1\u30A4\u30EB\u3092\u30C9\u30E9\u30C3\u30B0\uFF06\u30C9\u30ED\u30C3\u30D7<br><strong>\u307E\u305F\u306F\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u30D5\u30A1\u30A4\u30EB\u3092\u9078\u629E</strong>';}
+    /* Reset API cards */
+    var freeeCard=$('#api-card-freee'),mfCard=$('#api-card-mf');
+    if(freeeCard)setApiStatus(freeeCard,'\u5F85\u6A5F\u4E2D','#e0e7ff','var(--accent)','var(--border)');
+    if(mfCard)setApiStatus(mfCard,'\u5F85\u6A5F\u4E2D','#e0e7ff','var(--accent)','var(--border)');
     $$('.demo-fileitem').forEach(function(f){f.classList.remove('show')});
-    $$('.demo-bank').forEach(function(b){b.classList.remove('recognized')});
     var b1=$('#demo-btn-1');b1.textContent='\u30C7\u30FC\u30BF\u3092\u53D6\u308A\u8FBC\u3080 \u2192';b1.disabled=false;b1.onclick=runStep1;
     b1.classList.remove('no-pulse');b1.classList.add('demo-btn-pulse');
     var h1=$('.demo-panel[data-step="1"] .demo-btn-hint');if(h1)h1.style.display='';
@@ -2431,21 +2441,6 @@
     el.closest('.screen-mock').querySelectorAll('.mock-tab-content').forEach(function(c){c.classList.remove('active')});
     document.getElementById(tabId).classList.add('active');
   };
-
-  /* API / CSV tab toggle in demo step 1 */
-  document.addEventListener('click',function(e){
-    var apiTab=$('#demo-tab-api'),csvTab=$('#demo-tab-csv');
-    if(!apiTab||!csvTab)return;
-    if(e.target===apiTab){
-      apiTab.style.background='var(--accent)';apiTab.style.color='#fff';apiTab.style.fontWeight='600';
-      csvTab.style.background='var(--bg-alt)';csvTab.style.color='var(--text-sub)';csvTab.style.fontWeight='500';
-      $('#demo-import-api').style.display='';$('#demo-import-csv').style.display='none';
-    }else if(e.target===csvTab){
-      csvTab.style.background='var(--accent)';csvTab.style.color='#fff';csvTab.style.fontWeight='600';
-      apiTab.style.background='var(--bg-alt)';apiTab.style.color='var(--text-sub)';apiTab.style.fontWeight='500';
-      $('#demo-import-csv').style.display='';$('#demo-import-api').style.display='none';
-    }
-  });
 
   var autoStarted=false;
   document.addEventListener('DOMContentLoaded',function(){
