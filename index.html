@@ -2277,6 +2277,8 @@
     setTimeout(function(){
       running=false;btn.textContent='次へ \u2192';btn.disabled=false;
       btn.classList.remove('no-pulse');btn.classList.add('demo-btn-pulse');
+      var h=$('.demo-panel[data-step="1"] .demo-btn-hint');
+      if(h){h.style.display='flex';h.textContent='\u2193 \u6B21\u3078\u9032\u3080';}
       showWaiting();
       btn.onclick=function(){goTo(2)};
     },2800);
@@ -2316,6 +2318,8 @@
     setTimeout(function(){
       running=false;btn.textContent='\u6B21\u3078 \u2192';btn.disabled=false;
       btn.classList.remove('no-pulse');btn.classList.add('demo-btn-pulse');
+      var h=$('.demo-panel[data-step="2"] .demo-btn-hint');
+      if(h){h.style.display='flex';h.textContent='\u2193 \u6B21\u3078\u9032\u3080';}
       showWaiting();
       btn.onclick=function(){goTo(3)};
     },450*12+300);
