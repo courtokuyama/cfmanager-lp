@@ -10,7 +10,7 @@
 <title>CFManager — 経理をAIで次のステージへ</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='16' width='100' height='100' fill='%232563eb'/><text x='50' y='68' text-anchor='middle' font-size='52' font-weight='bold' fill='white'>CF</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #ffffff;
@@ -857,6 +857,170 @@
     .pain-item:hover .pain-item-detail { max-height: 160px; }
     .ai-demo-inner { grid-template-columns: 1fr; gap: 40px; }
   }
+
+  /* ─── DEMO WIZARD ─── */
+  .demo-section { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .demo-inner { max-width: var(--max-w); margin: 0 auto; padding: 96px 40px; }
+  .demo-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .demo-inner > h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 48px; text-wrap: balance;
+  }
+  .demo-box {
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--bg); overflow: hidden;
+  }
+  /* Stepper */
+  .demo-stepper {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 32px; border-bottom: 1px solid var(--border); background: var(--bg); gap: 0;
+  }
+  .demo-step-node {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    border: 2px solid var(--border); color: var(--text-light); background: var(--bg);
+    transition: all 0.3s; flex-shrink: 0;
+  }
+  .demo-step-node.active { border-color: var(--accent); color: #fff; background: var(--accent); }
+  .demo-step-node.done { border-color: var(--green); color: #fff; background: var(--green); }
+  .demo-step-line {
+    width: 80px; height: 2px; background: var(--border); transition: background 0.3s;
+  }
+  .demo-step-line.done { background: var(--green); }
+  .demo-step-lbl {
+    font-size: 12px; color: var(--text-light); margin-left: 8px; margin-right: 24px;
+    font-weight: 500; transition: color 0.3s; white-space: nowrap;
+  }
+  .demo-step-lbl.active { color: var(--accent); font-weight: 600; }
+  .demo-step-lbl.done { color: var(--green); }
+  /* Panels */
+  .demo-panel { display: none; padding: 32px; }
+  .demo-panel.visible { display: block; animation: fadeUp 0.4s ease both; }
+  /* Step 1 */
+  .demo-s1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .demo-dropzone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 48px; text-align: center; transition: border-color 0.3s, background 0.3s;
+  }
+  .demo-dropzone.importing { border-color: var(--accent); background: var(--accent-light); }
+  .demo-dropzone.done { border-color: var(--green); background: #ecfdf5; }
+  .demo-dropzone-icon { margin-bottom: 12px; }
+  .demo-dropzone-text { font-size: 14px; color: var(--text-sub); }
+  .demo-dropzone-text strong { color: var(--accent); }
+  .demo-filelist { display: flex; flex-direction: column; gap: 10px; }
+  .demo-fileitem {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: var(--radius); font-size: 13px; font-family: 'DM Mono', monospace;
+    color: var(--text); opacity: 0; transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .demo-fileitem.show { opacity: 1; transform: translateY(0); }
+  .demo-fileitem-icon {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .demo-fileitem-size { margin-left: auto; font-size: 11px; color: var(--text-light); }
+  .demo-banks { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .demo-bank {
+    padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 600;
+    background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-light);
+    transition: all 0.3s;
+  }
+  .demo-bank.recognized { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+  /* Step 2 */
+  .demo-progress-wrap { margin-bottom: 20px; }
+  .demo-progress-header {
+    display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;
+  }
+  .demo-progress-header span:first-child { color: var(--text-sub); font-weight: 600; }
+  .demo-progress-header span:last-child { color: var(--accent); font-weight: 700; font-family: 'DM Mono', monospace; }
+  .demo-progress-bar { height: 8px; background: var(--bg-alt); border-radius: 4px; overflow: hidden; }
+  .demo-progress-fill {
+    height: 100%; width: 0; background: var(--accent);
+    border-radius: 4px; transition: width 0.3s ease;
+  }
+  .demo-log {
+    background: var(--bg-dark); border-radius: var(--radius); padding: 20px;
+    height: 320px; overflow-y: auto; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 2;
+  }
+  .demo-log-line {
+    color: rgba(255,255,255,0.5); opacity: 0; transform: translateY(4px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .demo-log-line.show { opacity: 1; transform: translateY(0); }
+  .demo-log-line .tag-scan { color: var(--accent); }
+  .demo-log-line .tag-match { color: #34d399; }
+  .demo-log-line .tag-review { color: #fbbf24; }
+  .demo-log-line .tag-done { color: #34d399; font-weight: 700; }
+  /* Step 3 */
+  .demo-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .demo-kpi {
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; text-align: center;
+  }
+  .demo-kpi-num { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .demo-kpi-num.green { color: var(--green); }
+  .demo-kpi-num.yellow { color: var(--yellow); }
+  .demo-kpi-num.red { color: var(--red); }
+  .demo-kpi-label { font-size: 12px; color: var(--text-light); }
+  .demo-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px;
+  }
+  .demo-table th {
+    text-align: left; padding: 10px 16px; background: var(--bg-alt);
+    border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px; color: var(--text-sub);
+  }
+  .demo-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-sub); }
+  .demo-pill {
+    display: inline-block; padding: 2px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 600;
+  }
+  .demo-pill.green { background: #ecfdf5; color: var(--green); }
+  .demo-pill.yellow { background: #fffbeb; color: var(--yellow); }
+  .demo-pill.red { background: #fef2f2; color: var(--red); }
+  .demo-insights {
+    background: var(--accent-light); border-radius: var(--radius); padding: 20px 24px;
+  }
+  .demo-insights h4 { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+  .demo-insights li {
+    font-size: 13px; color: var(--text-sub); line-height: 2;
+    list-style: none; padding-left: 20px; position: relative;
+  }
+  .demo-insights li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent); }
+  /* Buttons */
+  .demo-btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 12px 28px; border-radius: 100px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: background 0.15s, opacity 0.15s;
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 24px;
+  }
+  .demo-btn:hover { background: var(--accent-dark); }
+  .demo-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .demo-btn:disabled:hover { background: var(--accent); }
+  .demo-btn-reset {
+    background: transparent; color: var(--text-sub); border: 1px solid var(--border);
+    padding: 12px 28px; border-radius: 100px; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s;
+    margin-top: 24px; margin-left: 12px;
+  }
+  .demo-btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 900px) {
+    .demo-s1-grid { grid-template-columns: 1fr; }
+    .demo-kpis { grid-template-columns: 1fr; }
+    .demo-stepper { flex-wrap: wrap; gap: 8px; padding: 16px; }
+    .demo-step-line { width: 40px; }
+    .demo-step-lbl { margin-right: 12px; }
+    .demo-table { font-size: 12px; }
+    .demo-table th, .demo-table td { padding: 8px 10px; }
+    .demo-inner { padding-left: 20px; padding-right: 20px; }
+    .demo-panel { padding: 20px; }
+    .demo-dropzone { padding: 32px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -1169,6 +1333,103 @@
       <h3>好きにいじっても公式の数字に影響しない</h3>
       <div class="point-arrow">→</div>
     </a>
+  </div>
+</div>
+
+<!-- DEMO WIZARD -->
+<div class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-label">How It Works</div>
+    <h2>CSVを入れてから、5分で完結する</h2>
+    <div class="demo-box">
+      <div class="demo-stepper">
+        <div class="demo-step-node active" data-step="1">1</div>
+        <span class="demo-step-lbl active" data-step="1">CSV取込</span>
+        <div class="demo-step-line" data-line="1"></div>
+        <div class="demo-step-node" data-step="2">2</div>
+        <span class="demo-step-lbl" data-step="2">自動照合</span>
+        <div class="demo-step-line" data-line="2"></div>
+        <div class="demo-step-node" data-step="3">3</div>
+        <span class="demo-step-lbl" data-step="3">レポート完成</span>
+      </div>
+      <!-- Step 1: CSV取込 -->
+      <div class="demo-panel visible" data-step="1">
+        <div class="demo-s1-grid">
+          <div>
+            <div class="demo-dropzone">
+              <div class="demo-dropzone-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="demo-dropzone-text">CSVファイルをドラッグ＆ドロップ<br><strong>またはクリックしてファイルを選択</strong></div>
+            </div>
+            <div class="demo-banks">
+              <span class="demo-bank">三菱UFJ</span>
+              <span class="demo-bank">三井住友</span>
+              <span class="demo-bank">楽天銀行</span>
+              <span class="demo-bank">みずほ</span>
+            </div>
+          </div>
+          <div class="demo-filelist">
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              mufg_2026_03.csv
+              <span class="demo-fileitem-size">127 KB</span>
+            </div>
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              smbc_card_2026_03.csv
+              <span class="demo-fileitem-size">84 KB</span>
+            </div>
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              rakuten_2026_03.csv
+              <span class="demo-fileitem-size">42 KB</span>
+            </div>
+          </div>
+        </div>
+        <button class="demo-btn" id="demo-btn-1">CSVを取り込む →</button>
+      </div>
+      <!-- Step 2: 自動照合 -->
+      <div class="demo-panel" data-step="2">
+        <div class="demo-progress-wrap">
+          <div class="demo-progress-header">
+            <span>自動照合中…</span>
+            <span id="demo-progress-pct">0%</span>
+          </div>
+          <div class="demo-progress-bar">
+            <div class="demo-progress-fill"></div>
+          </div>
+        </div>
+        <div class="demo-log"></div>
+        <button class="demo-btn" id="demo-btn-2">自動照合を実行 →</button>
+      </div>
+      <!-- Step 3: レポート完成 -->
+      <div class="demo-panel" data-step="3">
+        <div class="demo-kpis">
+          <div class="demo-kpi"><div class="demo-kpi-num green">936</div><div class="demo-kpi-label">照合済</div></div>
+          <div class="demo-kpi"><div class="demo-kpi-num yellow">63</div><div class="demo-kpi-label">要確認</div></div>
+          <div class="demo-kpi"><div class="demo-kpi-num red">19</div><div class="demo-kpi-label">未照合</div></div>
+        </div>
+        <table class="demo-table">
+          <thead><tr><th>摘要</th><th>勘定科目</th><th>金額</th><th>ステータス</th></tr></thead>
+          <tbody>
+            <tr><td>地代家賃</td><td>地代家賃</td><td>¥708,374</td><td><span class="demo-pill green">照合済</span></td></tr>
+            <tr><td>USEN BUSINESS</td><td>通信費</td><td>¥29,500</td><td><span class="demo-pill green">照合済</span></td></tr>
+            <tr><td>MHFカクヤス</td><td>仕入高</td><td>¥304,940</td><td><span class="demo-pill yellow">要確認</span></td></tr>
+            <tr><td>SMBC通信費</td><td>—</td><td>¥5,614</td><td><span class="demo-pill red">未照合</span></td></tr>
+          </tbody>
+        </table>
+        <div class="demo-insights">
+          <h4>AI インサイト</h4>
+          <ul>
+            <li>今月の照合率：92%（先月比 +8%）</li>
+            <li>未照合19件の主因：摘要名の表記ゆれ</li>
+            <li>定期支払を登録すると来月から自動照合率がさらに上がります</li>
+          </ul>
+        </div>
+        <button class="demo-btn-reset" id="demo-btn-reset">最初から</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1670,5 +1931,114 @@
 </footer>
 
 <script async src="https://tally.so/widgets/embed.js"></script>
+<script>
+(function(){
+  var running=false, step=1;
+  var $=function(s,c){return(c||document).querySelector(s)};
+  var $$=function(s,c){return[].slice.call((c||document).querySelectorAll(s))};
+
+  function updateStepper(s){
+    $$('.demo-step-node').forEach(function(n){
+      var v=+n.dataset.step;
+      n.className='demo-step-node'+(v<s?' done':v===s?' active':'');
+      n.textContent=v<s?'\u2713':v;
+    });
+    $$('.demo-step-lbl').forEach(function(l){
+      var v=+l.dataset.step;
+      l.className='demo-step-lbl'+(v<s?' done':v===s?' active':'');
+    });
+    $$('.demo-step-line').forEach(function(l){
+      l.className='demo-step-line'+(+l.dataset.line<s?' done':'');
+    });
+  }
+
+  function showPanel(s){
+    $$('.demo-panel').forEach(function(p){p.classList.remove('visible')});
+    $('.demo-panel[data-step="'+s+'"]').classList.add('visible');
+  }
+
+  function goTo(s){step=s;updateStepper(s);showPanel(s);}
+
+  function runStep1(){
+    if(running)return;running=true;
+    var btn=$('#demo-btn-1');btn.disabled=true;
+    var dz=$('.demo-dropzone'),files=$$('.demo-fileitem'),banks=$$('.demo-bank');
+    dz.classList.add('importing');
+    files.forEach(function(f,i){
+      setTimeout(function(){
+        f.classList.add('show');
+        if(banks[i])banks[i].classList.add('recognized');
+      },600*(i+1));
+    });
+    setTimeout(function(){
+      if(banks[3])banks[3].classList.add('recognized');
+      dz.classList.remove('importing');dz.classList.add('done');
+      dz.querySelector('.demo-dropzone-text').innerHTML='<strong style="color:var(--green)">取込完了</strong><br>3ファイル・1,018行を読み込みました';
+    },2400);
+    setTimeout(function(){
+      running=false;btn.textContent='次へ \u2192';btn.disabled=false;
+      btn.onclick=function(){goTo(2)};
+    },2800);
+  }
+
+  function runStep2(){
+    if(running)return;running=true;
+    var btn=$('#demo-btn-2');btn.disabled=true;
+    var logs=[
+      {tag:'SCAN',cls:'tag-scan',t:'mufg_2026_03.csv \u2014 612\u884C \u691C\u51FA'},
+      {tag:'SCAN',cls:'tag-scan',t:'smbc_card_2026_03.csv \u2014 284\u884C \u691C\u51FA'},
+      {tag:'SCAN',cls:'tag-scan',t:'rakuten_2026_03.csv \u2014 122\u884C \u691C\u51FA'},
+      {tag:'MATCH',cls:'tag-match',t:'\u5730\u4EE3\u5BB6\u8CC3 \u2192 \u00A5708,374 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'MATCH',cls:'tag-match',t:'USEN BUSINESS \u2192 \u00A529,500 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'MATCH',cls:'tag-match',t:'\u7D66\u4E0E\u632F\u8FBC \u2192 \u00A53,240,000 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'REVIEW',cls:'tag-review',t:'MHF\u30AB\u30AF\u30E4\u30B9 \u2014 \u6458\u8981\u540D\u3086\u308C\u3001\u8981\u78BA\u8A8D'},
+      {tag:'MATCH',cls:'tag-match',t:'\u5730\u4EE3\u5BB6\u8CC32\u4EF6\u76EE \u2192 \u00A5354,187 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'MATCH',cls:'tag-match',t:'\u307F\u305A\u307B\u632F\u8FBC\u624B\u6570\u6599 \u2192 \u00A5770 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'REVIEW',cls:'tag-review',t:'SMBC\u901A\u4FE1\u8CBB \u2014 \u52D8\u5B9A\u79D1\u76EE\u672A\u767B\u9332'},
+      {tag:'MATCH',cls:'tag-match',t:'\u697D\u5929\u30AB\u30FC\u30C9 \u2192 \u00A5128,400 \u81EA\u52D5\u7167\u5408 \u2713'},
+      {tag:'DONE',cls:'tag-done',t:'\u7167\u5408\u5B8C\u4E86 \u2014 1,018\u4EF6\u4E2D 936\u4EF6\u81EA\u52D5\u7167\u5408'}
+    ];
+    var pcts=[0,5,12,25,38,52,60,68,76,82,88,92];
+    var lc=$('.demo-log'),pf=$('.demo-progress-fill'),pp=$('#demo-progress-pct');
+    logs.forEach(function(log,i){
+      setTimeout(function(){
+        var el=document.createElement('div');
+        el.className='demo-log-line';
+        el.innerHTML='<span class="'+log.cls+'">['+log.tag+']</span> '+log.t;
+        lc.appendChild(el);
+        requestAnimationFrame(function(){el.classList.add('show')});
+        lc.scrollTop=lc.scrollHeight;
+        pf.style.width=pcts[i]+'%';pp.textContent=pcts[i]+'%';
+      },450*(i+1));
+    });
+    setTimeout(function(){
+      running=false;btn.textContent='\u6B21\u3078 \u2192';btn.disabled=false;
+      btn.onclick=function(){goTo(3)};
+    },450*12+300);
+  }
+
+  function resetDemo(){
+    running=false;step=1;updateStepper(1);
+    var dz=$('.demo-dropzone');
+    dz.className='demo-dropzone';
+    dz.querySelector('.demo-dropzone-text').innerHTML='CSV\u30D5\u30A1\u30A4\u30EB\u3092\u30C9\u30E9\u30C3\u30B0\uFF06\u30C9\u30ED\u30C3\u30D7<br><strong>\u307E\u305F\u306F\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u30D5\u30A1\u30A4\u30EB\u3092\u9078\u629E</strong>';
+    $$('.demo-fileitem').forEach(function(f){f.classList.remove('show')});
+    $$('.demo-bank').forEach(function(b){b.classList.remove('recognized')});
+    var b1=$('#demo-btn-1');b1.textContent='CSV\u3092\u53D6\u308A\u8FBC\u3080 \u2192';b1.disabled=false;b1.onclick=runStep1;
+    $('.demo-log').innerHTML='';
+    $('.demo-progress-fill').style.width='0%';
+    $('#demo-progress-pct').textContent='0%';
+    var b2=$('#demo-btn-2');b2.textContent='\u81EA\u52D5\u7167\u5408\u3092\u5B9F\u884C \u2192';b2.disabled=false;b2.onclick=runStep2;
+    showPanel(1);
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    $('#demo-btn-1').onclick=runStep1;
+    $('#demo-btn-2').onclick=runStep2;
+    $('#demo-btn-reset').onclick=resetDemo;
+    goTo(1);
+  });
+})();
+</script>
 </body>
 </html>
