@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="freee・マネフォからAPI自動取得＋CSV対応。予実照合・PL分析・CF予測をAIが自動生成。公式の数字に影響しない、好きにいじれる経理AI分析ツール。">
-<meta property="og:title" content="CFManager — 経理をAIで次のステージへ">
-<meta property="og:description" content="freee・マネフォからAPI自動取得。予実照合・PL分析・CF予測をAIが即座に生成。公式データに影響しない安全設計。">
+<meta name="description" content="{{meta_description}}">
+<meta property="og:title" content="{{og_title}}">
+<meta property="og:description" content="{{og_description}}">
 <meta property="og:type" content="website">
-<title>CFManager — 経理をAIで次のステージへ</title>
+<title>{{meta_title}}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='16' width='100' height='100' fill='%232563eb'/><text x='50' y='68' text-anchor='middle' font-size='52' font-weight='bold' fill='white'>CF</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1148,29 +1148,27 @@
   <div class="hero-inner">
   <!-- テキスト（PC: 左カラム / Mobile: オーバーレイカード） -->
   <div class="hero-content">
-    <div class="hero-badge">経理AI自動化 SaaS</div>
-    <h1 class="hero-title">経理をAIで<br>次のステージへ</h1>
+    <div class="hero-badge">{{hero_badge}}</div>
+    <h1 class="hero-title">{{hero_title}}</h1>
     <p class="hero-sub">
-      freee・マネフォから<strong style="color:var(--accent);">読み取り専用API</strong>で自動取得。CSVインポートにも対応。<br>
-      好きに分析・加工しても、公式の数字には一切影響なし。<br>
-      AIが必要なレポートを<strong style="color:var(--accent);">即座に自動生成</strong>します。
+      {{hero_sub}}
     </p>
     <div class="hero-actions">
-      <a href="#contact-form" class="hero-cta-primary">資料請求（無料） →</a>
+      <a href="#contact-form" class="hero-cta-primary">{{hero_cta}}</a>
     </div>
-    <p class="hero-note">30秒で入力完了 · 営業日1日以内にお届け</p>
+    <p class="hero-note">{{hero_note}}</p>
     <div class="hero-trust">
       <div class="hero-trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        公式データ影響ゼロ
+        {{hero_trust_1}}
       </div>
       <div class="hero-trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        初期費用0円
+        {{hero_trust_2}}
       </div>
       <div class="hero-trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        最短5分で導入
+        {{hero_trust_3}}
       </div>
     </div>
   </div>
@@ -1274,34 +1272,34 @@
 <div class="pain-section">
   <div class="pain-inner">
     <div class="pain-label">Common Problems</div>
-    <h2>こんなお悩みありませんか？</h2>
+    <h2>{{pain_title}}</h2>
     <div class="pain-list">
       <div class="pain-item">
         <div class="pain-item-head">
           <div class="pain-item-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
-          <h3>freee・マネフォを使っているのに、結局スプレッドシートで管理してしまっている</h3>
+          <h3>{{pain_1_title}}</h3>
         </div>
-        <div class="pain-item-detail">会計ソフトの数字をうっかりいじってしまうリスクがあるから、直接触れない。結局エクスポートしてスプレッドシートで手作業。二重管理が常態化している。</div>
+        <div class="pain-item-detail">{{pain_1_desc}}</div>
       </div>
       <div class="pain-item">
         <div class="pain-item-head">
           <div class="pain-item-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
-          <h3>決算や大事な数字を触ってしまうのが怖くて、会計ソフトで分析できない</h3>
+          <h3>{{pain_2_title}}</h3>
         </div>
-        <div class="pain-item-detail">税理士が使う環境だから下手に触れない。分析のために数字を加工したくても、会計ソフト上では怖くてできない。「触れない聖域」になっている。</div>
+        <div class="pain-item-detail">{{pain_2_desc}}</div>
       </div>
       <div class="pain-item">
         <div class="pain-item-head">
           <div class="pain-item-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           </div>
-          <h3>欲しい数字やレポートをすぐに出せない。毎回手作業で集計し直している</h3>
+          <h3>{{pain_3_title}}</h3>
         </div>
-        <div class="pain-item-detail">「今月のPLを見せて」「先月との比較は？」——こんな簡単な質問にも、毎回データを引っ張り出して集計し直す手間がかかっている。</div>
+        <div class="pain-item-detail">{{pain_3_desc}}</div>
       </div>
     </div>
   </div>
@@ -1312,7 +1310,7 @@
   <div class="ba-inner">
     <div class="ba-heading">
       <div class="ba-heading-label">Solution</div>
-      <h2>CFManagerが解決すること</h2>
+      <h2>{{ba_title}}</h2>
     </div>
     <div class="ba-diagram">
       <div class="ba-side ba-before">
@@ -1322,31 +1320,31 @@
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </div>
-          スプレッドシートで手動照合
+          {{ba_before_1}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </div>
-          月次レポート作成に20時間以上
+          {{ba_before_2}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </div>
-          月末まで数字が見えない
+          {{ba_before_3}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </div>
-          資金繰りの見通しが立たない
+          {{ba_before_4}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </div>
-          会計ソフト連携でデータ破損リスク
+          {{ba_before_5}}
         </div>
       </div>
       <div class="ba-arrow">
@@ -1359,36 +1357,36 @@
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          AIが96.9%を自動照合
+          {{ba_after_1}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          月次レポートが5分で完成
+          {{ba_after_2}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          リアルタイムでPL・数字を把握
+          {{ba_after_3}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          CF予測で資金計画を可視化
+          {{ba_after_4}}
         </div>
         <div class="ba-step">
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          読み取り専用API＋CSV。公式データに影響ゼロ
+          {{ba_after_5}}
         </div>
       </div>
     </div>
     <div class="ba-bottom-note">
-      API自動取得とCSVインポートで、<strong>経理業務を92%自動化</strong>。AIが必要なレポートを即座に生成します。
+      {{ba_bottom_note}}
     </div>
   </div>
 </div>
@@ -1400,27 +1398,27 @@
   <div class="points-grid">
     <a href="#point-01" class="point-card">
       <div class="point-num">01</div>
-      <h3>freee・マネフォAPI連携＋CSV対応</h3>
+      <h3>{{point_card_01}}</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-02" class="point-card">
       <div class="point-num">02</div>
-      <h3>AIが予実を自動照合</h3>
+      <h3>{{point_card_02}}</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-03" class="point-card">
       <div class="point-num">03</div>
-      <h3>損益計算書をリアルタイム自動生成</h3>
+      <h3>{{point_card_03}}</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-04" class="point-card">
       <div class="point-num">04</div>
-      <h3>定期支払を自動検出しCFを予測</h3>
+      <h3>{{point_card_04}}</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-05" class="point-card">
       <div class="point-num">05</div>
-      <h3>好きにいじっても公式の数字に影響しない</h3>
+      <h3>{{point_card_05}}</h3>
       <div class="point-arrow">→</div>
     </a>
   </div>
@@ -1431,12 +1429,9 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 01</div>
-      <h3>freee・マネフォからAPI自動取得<br>＋ CSVにも対応</h3>
+      <h3>{{point_01_title}}</h3>
       <p>
-        freee・マネーフォワードから読み取り専用APIでデータを自動取得。<br>
-        銀行口座・クレジットカードのCSVインポートにも対応。<br>
-        公式データには一切書き込まないため影響ゼロ。<br>
-        AIがフォーマットを自動判定し、勘定科目を分類します。
+        {{point_01_desc}}
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1493,12 +1488,9 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 02</div>
-      <h3>AIが予測と実績を<br>自動マッチング</h3>
+      <h3>{{point_02_title}}</h3>
       <p>
-        定期支払いのパターンをAIが学習し、<br>
-        取引履歴から自動で照合。<br>
-        手動確認が必要なのは「要確認」フラグのものだけ。<br>
-        照合作業が最大92%削減されます。
+        {{point_02_desc}}
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1535,11 +1527,9 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 03</div>
-      <h3>損益計算書が<br>リアルタイムで自動生成</h3>
+      <h3>{{point_03_title}}</h3>
       <p>
-        部門別・月別のPL（損益計算書）をリアルタイムで自動生成。<br>
-        予測と実績の差異・達成率をひと目で確認。<br>
-        経営陣への報告がワンクリックで完了します。
+        {{point_03_desc}}
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1566,12 +1556,9 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 04</div>
-      <h3>固定費を自動検出し<br>キャッシュフローを予測</h3>
+      <h3>{{point_04_title}}</h3>
       <p>
-        取引履歴から定期支払いを自動で検出し、<br>
-        将来のキャッシュフローを予測。<br>
-        「今月末に資金が足りるか」を<br>
-        月次締め前に把握できます。
+        {{point_04_desc}}
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1623,12 +1610,9 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 05</div>
-      <h3>好きにいじっても<br>公式の数字に影響しない</h3>
+      <h3>{{point_05_title}}</h3>
       <p>
-        freee・マネーフォワードから読み取り専用APIでデータを取得。<br>
-        書き込みは一切行わないため、公式の数字には影響しません。<br>
-        CFManager上で好きに分析・加工しても、<br>
-        税理士が使う環境を壊す心配がゼロです。
+        {{point_05_desc}}
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1670,12 +1654,9 @@
   <div class="ai-demo-inner">
     <div>
       <div class="ai-demo-label">AI-Powered Reports</div>
-      <h3>外部AIに聞くだけで<br>必要なレポートが即完成</h3>
+      <h3>{{ai_title}}</h3>
       <p class="ai-demo-text">
-        CFManagerはClaude・ChatGPT等の外部AIとAPI接続。<br>
-        「今月のPL出して」「前月比で赤字の科目は？」——<br>
-        自然言語で聞くだけで、AIが完全に作業して<br>
-        必要な数字とレポートを即座に生成します。
+        {{ai_desc}}
       </p>
       <ul class="ai-demo-features">
         <li><div class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Claude / ChatGPTなど外部AIと直接接続</li>
@@ -2075,31 +2056,31 @@
 
 <!-- MID CTA -->
 <div class="mid-cta">
-  <p>導入に関してご不明な点がございましたら<br>お気軽にお問い合わせください</p>
+  <p>{{mid_cta_text}}</p>
   <a href="#contact-form" class="btn-primary">資料請求（無料）</a>
 </div>
 
 <!-- METRICS -->
 <div id="metrics" class="metrics-section">
   <div class="metrics-inner">
-    <div><div class="metric-num">92%</div><div class="metric-label">照合作業の時間削減</div></div>
-    <div><div class="metric-num">5分</div><div class="metric-label">月次レポートの作成時間</div></div>
-    <div><div class="metric-num">0件</div><div class="metric-label">公式会計ソフトへのアクセス</div></div>
-    <div><div class="metric-num">即日</div><div class="metric-label">データ取込から利用開始まで</div></div>
+    <div><div class="metric-num">{{metric_1_num}}{{metric_1_unit}}</div><div class="metric-label">{{metric_1_label}}</div></div>
+    <div><div class="metric-num">{{metric_2_num}}{{metric_2_unit}}</div><div class="metric-label">{{metric_2_label}}</div></div>
+    <div><div class="metric-num">{{metric_3_num}}{{metric_3_unit}}</div><div class="metric-label">{{metric_3_label}}</div></div>
+    <div><div class="metric-num">{{metric_4_num}}</div><div class="metric-label">{{metric_4_label}}</div></div>
   </div>
 </div>
 
 <!-- WHO -->
 <div class="who-section" id="who">
   <div class="who-label">For Who</div>
-  <h2>こんな方のためのツールです</h2>
+  <h2>{{who_title}}</h2>
   <div class="who-cards">
     <div class="who-card">
       <div class="who-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
       </div>
-      <h3>「毎月のレポート作成から解放されたい」</h3>
-      <p>100〜300名規模の企業で、月次レポートや予実管理をスプレッドシートで対応している経理担当者の方。</p>
+      <h3>{{who_card_1_title}}</h3>
+      <p>{{who_card_1_desc}}</p>
       <div class="who-benefits">
         <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>スプレッドシートの管理・更新作業がゼロに</div>
         <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>照合作業がボタン一つで完了</div>
@@ -2111,8 +2092,8 @@
       <div class="who-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
       </div>
-      <h3>「今月の数字をリアルタイムで見たい」</h3>
-      <p>月末の集計を待たずに、今の会社の財務状況を把握したい経営層・管理職の方。</p>
+      <h3>{{who_card_2_title}}</h3>
+      <p>{{who_card_2_desc}}</p>
       <div class="who-benefits">
         <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>月末を待たずリアルタイムでPL確認</div>
         <div class="who-benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>キャッシュフロー予測で資金計画が明確に</div>
@@ -2130,8 +2111,8 @@
     <h2>よくある質問</h2>
     <div class="faq-list">
       <div class="faq-item">
-        <div class="faq-q">料金はいくらですか？</div>
-        <div class="faq-a">以下の3プランをご用意しています。すべてのプランに14日間の無料トライアルが付きます。</div>
+        <div class="faq-q">{{faq_1_q}}</div>
+        <div class="faq-a">{{faq_1_a}}</div>
         <div class="faq-pricing">
           <table class="faq-pricing-table">
             <thead>
@@ -2163,28 +2144,28 @@
         <div class="faq-pricing-note">※ 年間契約の場合、月額料金が20%オフになります。初期費用・解約手数料は一切かかりません。</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">freee・マネーフォワードと連携しますか？</div>
-        <div class="faq-a">はい、読み取り専用APIで連携します。freee・マネーフォワードからデータを自動取得しますが、書き込みは一切行いません。公式の数字に影響を与えることなく、CFManager上で自由に分析・加工できます。CSVインポートにも対応しています。</div>
+        <div class="faq-q">{{faq_2_q}}</div>
+        <div class="faq-a">{{faq_2_a}}</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">どんな銀行・カードのCSVに対応していますか？</div>
-        <div class="faq-a">三菱UFJ・三井住友・みずほ・楽天・ゆうちょ等の主要銀行、および主要クレジットカード会社のCSVフォーマットに対応しています。自動判定機能でフォーマットを識別します。</div>
+        <div class="faq-q">{{faq_3_q}}</div>
+        <div class="faq-a">{{faq_3_a}}</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">セキュリティ面は大丈夫ですか？</div>
-        <div class="faq-a">データは暗号化して保存されます。freee・マネフォとは読み取り専用APIのみで接続し、書き込みは一切行いません。公式会計ソフトのデータを変更・削除する機能は存在しないため、安全にご利用いただけます。</div>
+        <div class="faq-q">{{faq_4_q}}</div>
+        <div class="faq-a">{{faq_4_a}}</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">導入にシステム知識は必要ですか？</div>
-        <div class="faq-a">不要です。CSVファイルをドラッグ＆ドロップするだけで即日利用開始できます。複雑な設定や初期費用もありません。</div>
+        <div class="faq-q">{{faq_5_q}}</div>
+        <div class="faq-a">{{faq_5_a}}</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">複数部門・複数口座に対応していますか？</div>
-        <div class="faq-a">はい、対応しています。部門フィルタ機能で「全部門」「営業部」など部門別の分析が可能です。複数の銀行口座・カードのCSVをまとめて取り込むことができます。</div>
+        <div class="faq-q">{{faq_6_q}}</div>
+        <div class="faq-a">{{faq_6_a}}</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">無料トライアル中に解約できますか？</div>
-        <div class="faq-a">はい、14日間の無料トライアル中はいつでも解約可能です。トライアル期間中は一切課金されません。クレジットカードの登録も不要です。</div>
+        <div class="faq-q">{{faq_7_q}}</div>
+        <div class="faq-a">{{faq_7_a}}</div>
       </div>
     </div>
   </div>
@@ -2197,8 +2178,8 @@
     <div class="form-visual-side">
       <div class="form-visual-header">
         <div class="form-label">Document Request</div>
-        <h2>無料で資料を請求する</h2>
-        <p>CFManagerの詳細資料をお送りします。お気軽にご請求ください。</p>
+        <h2>{{cta_title}}</h2>
+        <p>{{cta_desc}}</p>
       </div>
       <div class="form-dashboard">
         <div class="dashboard-frame">
@@ -2271,7 +2252,7 @@
   <div class="footer-inner">
     <div>
       <div class="footer-logo"><span>CF</span><span>Manager</span></div>
-      <p class="footer-desc">freee・マネフォからAPI自動取得。AIが即座にレポートを生成する、好きにいじれる経理AI分析ツール。</p>
+      <p class="footer-desc">{{footer_desc}}</p>
     </div>
     <div class="footer-links">
       <div class="footer-col">
@@ -2296,7 +2277,7 @@
       </div>
     </div>
   </div>
-  <div class="footer-bottom">© 2026 株式会社Bewibe. All rights reserved.</div>
+  <div class="footer-bottom">{{footer_copyright}}</div>
 </footer>
 
 <script async src="https://tally.so/widgets/embed.js"></script>

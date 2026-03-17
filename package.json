@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^5.13.0",
+    "puppeteer": "^24.39.1"
+  }
+}
