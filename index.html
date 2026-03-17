@@ -671,19 +671,23 @@
     font-size: clamp(24px, 3vw, 32px); font-weight: 700;
     margin-bottom: 48px; text-wrap: balance;
   }
-  .pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .pain-card {
-    background: #fef2f2; border: 1px solid #fecaca;
-    border-radius: var(--radius-lg); padding: 32px;
+  .pain-list { display: flex; flex-direction: column; }
+  .pain-item {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 20px;
   }
-  .pain-card-icon {
+  .pain-item:first-child { padding-top: 0; }
+  .pain-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .pain-item-icon {
     width: 48px; height: 48px; border-radius: 12px;
     background: #fee2e2; display: flex;
-    align-items: center; justify-content: center; margin-bottom: 20px;
+    align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .pain-card-icon svg { width: 24px; height: 24px; }
-  .pain-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; line-height: 1.6; }
-  .pain-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; }
+  .pain-item-icon svg { width: 22px; height: 22px; }
+  .pain-item h3 {
+    font-size: clamp(18px, 2.2vw, 22px); font-weight: 700; line-height: 1.6;
+  }
 
   /* ─── AI REPORT DEMO ─── */
   .ai-demo-section { background: var(--bg-dark); border-top: 1px solid var(--border); }
@@ -832,7 +836,8 @@
     .points-overview, .point-detail, .who-section, .faq-inner,
     .message-inner, .form-inner, .mid-cta, .metrics-inner,
     .ba-inner, .pain-inner, .ai-demo-inner { padding-left: 20px; padding-right: 20px; }
-    .pain-cards { grid-template-columns: 1fr; }
+    .pain-item { gap: 16px; }
+    .pain-item h3 { font-size: 16px; }
     .ai-demo-inner { grid-template-columns: 1fr; gap: 40px; }
   }
 </style>
@@ -999,27 +1004,24 @@
   <div class="pain-inner">
     <div class="pain-label">Common Problems</div>
     <h2>こんなお悩みありませんか？</h2>
-    <div class="pain-cards">
-      <div class="pain-card">
-        <div class="pain-card-icon">
+    <div class="pain-list">
+      <div class="pain-item">
+        <div class="pain-item-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
         </div>
-        <h3>freee・マネフォを使っているのに、結局スプレッドシートで管理している</h3>
-        <p>決算や大事な数字をうっかりいじってしまうリスクがあるから、会計ソフトの数字を直接触れない。結局スプレッドシートにエクスポートして手作業で分析している。</p>
+        <h3>freee・マネフォを使っているのに、結局スプレッドシートで管理してしまっている</h3>
       </div>
-      <div class="pain-card">
-        <div class="pain-card-icon">
+      <div class="pain-item">
+        <div class="pain-item-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <h3>欲しい数字やレポートをすぐに出せない</h3>
-        <p>「今月のPLを見せて」「先月との比較は？」——簡単な質問にも、毎回データを引っ張り出して集計し直す手間がかかっている。</p>
+        <h3>決算や大事な数字を触ってしまうのが怖くて、会計ソフトで分析できない</h3>
       </div>
-      <div class="pain-card">
-        <div class="pain-card-icon">
+      <div class="pain-item">
+        <div class="pain-item-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         </div>
-        <h3>会計ソフトは「触れない聖域」になっている</h3>
-        <p>税理士が使うデータだから、うかつに触れない。分析のために数字を加工したいのに、会計ソフト上では怖くてできない。</p>
+        <h3>欲しい数字やレポートをすぐに出せない。毎回手作業で集計し直している</h3>
       </div>
     </div>
   </div>
