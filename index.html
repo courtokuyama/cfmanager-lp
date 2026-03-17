@@ -1050,13 +1050,28 @@
     display: flex; align-items: center; gap: 16px; margin-top: 24px; flex-wrap: wrap;
   }
   .demo-btn-area .demo-btn { margin-top: 0; }
+  .demo-btn-area { position: relative; }
   .demo-btn-hint {
-    font-size: 13px; color: var(--accent); font-weight: 500;
-    animation: hintPulse 2s ease infinite;
+    position: absolute; bottom: calc(100% + 14px); left: 0;
+    font-size: 13px; color: var(--accent); font-weight: 600;
+    background: #fff; padding: 8px 18px; border-radius: 100px;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.18);
+    white-space: nowrap; display: none; align-items: center; gap: 6px;
+    pointer-events: none; z-index: 10;
   }
-  @keyframes hintPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+  .demo-btn-hint::after {
+    content: ''; position: absolute; bottom: -6px; left: 28px;
+    width: 0; height: 0;
+    border-left: 7px solid transparent; border-right: 7px solid transparent;
+    border-top: 7px solid #fff;
+  }
+  .demo-box.waiting .demo-btn-hint {
+    display: flex;
+    animation: hintBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes hintBounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-10px); opacity: 0.85; }
   }
   .demo-btn-pulse {
     animation: btnGlow 2s ease infinite;
@@ -1685,7 +1700,7 @@
         </div>
         <div class="demo-btn-area">
           <button class="demo-btn demo-btn-pulse" id="demo-btn-1">CSVを取り込む →</button>
-          <span class="demo-btn-hint">ボタンを押してデモを体験</span>
+          <span class="demo-btn-hint">↓ ここをクリックして体験</span>
         </div>
       </div>
       <!-- Step 2: 自動照合 -->
@@ -1702,7 +1717,7 @@
         <div class="demo-log"></div>
         <div class="demo-btn-area">
           <button class="demo-btn demo-btn-pulse" id="demo-btn-2">自動照合を実行 →</button>
-          <span class="demo-btn-hint">ボタンを押して照合開始</span>
+          <span class="demo-btn-hint">↓ ここをクリック</span>
         </div>
       </div>
       <!-- Step 3: レポート完成 -->
