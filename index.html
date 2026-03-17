@@ -1002,6 +1002,28 @@
   .demo-btn:hover { background: var(--accent-dark); }
   .demo-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .demo-btn:disabled:hover { background: var(--accent); }
+  .demo-btn-area {
+    display: flex; align-items: center; gap: 16px; margin-top: 24px; flex-wrap: wrap;
+  }
+  .demo-btn-area .demo-btn { margin-top: 0; }
+  .demo-btn-hint {
+    font-size: 13px; color: var(--accent); font-weight: 500;
+    animation: hintPulse 2s ease infinite;
+  }
+  @keyframes hintPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .demo-btn-pulse {
+    animation: btnGlow 2s ease infinite;
+  }
+  .demo-btn-pulse:disabled, .demo-btn-pulse.no-pulse {
+    animation: none;
+  }
+  @keyframes btnGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(37,99,235,0.3); }
+    50% { box-shadow: 0 4px 32px rgba(37,99,235,0.6); }
+  }
   .demo-btn-reset {
     background: transparent; color: var(--text-sub); border: 1px solid var(--border);
     padding: 12px 28px; border-radius: 100px; font-size: 14px; font-weight: 500;
@@ -1336,103 +1358,6 @@
   </div>
 </div>
 
-<!-- DEMO WIZARD -->
-<div class="demo-section" id="demo">
-  <div class="demo-inner">
-    <div class="demo-label">How It Works</div>
-    <h2>CSVを入れてから、5分で完結する</h2>
-    <div class="demo-box">
-      <div class="demo-stepper">
-        <div class="demo-step-node active" data-step="1">1</div>
-        <span class="demo-step-lbl active" data-step="1">CSV取込</span>
-        <div class="demo-step-line" data-line="1"></div>
-        <div class="demo-step-node" data-step="2">2</div>
-        <span class="demo-step-lbl" data-step="2">自動照合</span>
-        <div class="demo-step-line" data-line="2"></div>
-        <div class="demo-step-node" data-step="3">3</div>
-        <span class="demo-step-lbl" data-step="3">レポート完成</span>
-      </div>
-      <!-- Step 1: CSV取込 -->
-      <div class="demo-panel visible" data-step="1">
-        <div class="demo-s1-grid">
-          <div>
-            <div class="demo-dropzone">
-              <div class="demo-dropzone-icon">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              </div>
-              <div class="demo-dropzone-text">CSVファイルをドラッグ＆ドロップ<br><strong>またはクリックしてファイルを選択</strong></div>
-            </div>
-            <div class="demo-banks">
-              <span class="demo-bank">三菱UFJ</span>
-              <span class="demo-bank">三井住友</span>
-              <span class="demo-bank">楽天銀行</span>
-              <span class="demo-bank">みずほ</span>
-            </div>
-          </div>
-          <div class="demo-filelist">
-            <div class="demo-fileitem">
-              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              mufg_2026_03.csv
-              <span class="demo-fileitem-size">127 KB</span>
-            </div>
-            <div class="demo-fileitem">
-              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              smbc_card_2026_03.csv
-              <span class="demo-fileitem-size">84 KB</span>
-            </div>
-            <div class="demo-fileitem">
-              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              rakuten_2026_03.csv
-              <span class="demo-fileitem-size">42 KB</span>
-            </div>
-          </div>
-        </div>
-        <button class="demo-btn" id="demo-btn-1">CSVを取り込む →</button>
-      </div>
-      <!-- Step 2: 自動照合 -->
-      <div class="demo-panel" data-step="2">
-        <div class="demo-progress-wrap">
-          <div class="demo-progress-header">
-            <span>自動照合中…</span>
-            <span id="demo-progress-pct">0%</span>
-          </div>
-          <div class="demo-progress-bar">
-            <div class="demo-progress-fill"></div>
-          </div>
-        </div>
-        <div class="demo-log"></div>
-        <button class="demo-btn" id="demo-btn-2">自動照合を実行 →</button>
-      </div>
-      <!-- Step 3: レポート完成 -->
-      <div class="demo-panel" data-step="3">
-        <div class="demo-kpis">
-          <div class="demo-kpi"><div class="demo-kpi-num green">936</div><div class="demo-kpi-label">照合済</div></div>
-          <div class="demo-kpi"><div class="demo-kpi-num yellow">63</div><div class="demo-kpi-label">要確認</div></div>
-          <div class="demo-kpi"><div class="demo-kpi-num red">19</div><div class="demo-kpi-label">未照合</div></div>
-        </div>
-        <table class="demo-table">
-          <thead><tr><th>摘要</th><th>勘定科目</th><th>金額</th><th>ステータス</th></tr></thead>
-          <tbody>
-            <tr><td>地代家賃</td><td>地代家賃</td><td>¥708,374</td><td><span class="demo-pill green">照合済</span></td></tr>
-            <tr><td>USEN BUSINESS</td><td>通信費</td><td>¥29,500</td><td><span class="demo-pill green">照合済</span></td></tr>
-            <tr><td>MHFカクヤス</td><td>仕入高</td><td>¥304,940</td><td><span class="demo-pill yellow">要確認</span></td></tr>
-            <tr><td>SMBC通信費</td><td>—</td><td>¥5,614</td><td><span class="demo-pill red">未照合</span></td></tr>
-          </tbody>
-        </table>
-        <div class="demo-insights">
-          <h4>AI インサイト</h4>
-          <ul>
-            <li>今月の照合率：92%（先月比 +8%）</li>
-            <li>未照合19件の主因：摘要名の表記ゆれ</li>
-            <li>定期支払を登録すると来月から自動照合率がさらに上がります</li>
-          </ul>
-        </div>
-        <button class="demo-btn-reset" id="demo-btn-reset">最初から</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- POINT 01 -->
 <div class="point-detail" id="point-01">
   <div class="point-detail-inner">
@@ -1653,52 +1578,104 @@
   </div>
 </div>
 
-<!-- AI REPORT DEMO -->
-<div class="ai-demo-section" id="ai-report">
-  <div class="ai-demo-inner">
-    <div>
-      <div class="ai-demo-label">AI Report</div>
-      <h3>AIに聞くだけで<br>必要なレポートが即座に出てくる</h3>
-      <p class="ai-demo-text">
-        外部AIと接続し、チャットで指示するだけで<br>
-        必要な数字・レポートを瞬時に生成。<br>
-        完全にAIが作業を代行します。
-      </p>
-      <ul class="ai-demo-features">
-        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「今月のPL出して」→ 即座に損益計算書を生成</li>
-        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「先月との差異を分析して」→ 比較レポートを自動作成</li>
-        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「来月のCF予測を出して」→ キャッシュフロー予測を表示</li>
-      </ul>
-    </div>
-    <div class="ai-chat-mock">
-      <div class="ai-chat-header">
-        <div class="ai-chat-dot"></div>
-        CFManager AI — オンライン
+<!-- DEMO WIZARD -->
+<div class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-label">How It Works</div>
+    <h2>CSVを入れてから、5分で完結する</h2>
+    <div class="demo-box">
+      <div class="demo-stepper">
+        <div class="demo-step-node active" data-step="1">1</div>
+        <span class="demo-step-lbl active" data-step="1">CSV取込</span>
+        <div class="demo-step-line" data-line="1"></div>
+        <div class="demo-step-node" data-step="2">2</div>
+        <span class="demo-step-lbl" data-step="2">自動照合</span>
+        <div class="demo-step-line" data-line="2"></div>
+        <div class="demo-step-node" data-step="3">3</div>
+        <span class="demo-step-lbl" data-step="3">レポート完成</span>
       </div>
-      <div class="ai-chat-body">
-        <div class="ai-msg ai-msg-user">今月のPLを出して</div>
-        <div class="ai-msg ai-msg-bot">
-          今月の損益計算書を生成しました。
-          <div class="ai-report-mini">
-            <div class="ai-report-mini-row"><span>売上高</span><span>¥9,750,200</span></div>
-            <div class="ai-report-mini-row"><span>売上原価</span><span>¥-3,280,000</span></div>
-            <div class="ai-report-mini-row"><span>販管費</span><span>¥-4,120,430</span></div>
-            <div class="ai-report-mini-row"><span>営業利益</span><span>¥2,349,770</span></div>
+      <!-- Step 1: CSV取込 -->
+      <div class="demo-panel visible" data-step="1">
+        <div class="demo-s1-grid">
+          <div>
+            <div class="demo-dropzone">
+              <div class="demo-dropzone-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="demo-dropzone-text">CSVファイルをドラッグ＆ドロップ<br><strong>またはクリックしてファイルを選択</strong></div>
+            </div>
+            <div class="demo-banks">
+              <span class="demo-bank">三菱UFJ</span>
+              <span class="demo-bank">三井住友</span>
+              <span class="demo-bank">楽天銀行</span>
+              <span class="demo-bank">みずほ</span>
+            </div>
+          </div>
+          <div class="demo-filelist">
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              mufg_2026_03.csv
+              <span class="demo-fileitem-size">127 KB</span>
+            </div>
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              smbc_card_2026_03.csv
+              <span class="demo-fileitem-size">84 KB</span>
+            </div>
+            <div class="demo-fileitem">
+              <div class="demo-fileitem-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              rakuten_2026_03.csv
+              <span class="demo-fileitem-size">42 KB</span>
+            </div>
           </div>
         </div>
-        <div class="ai-msg ai-msg-user">先月と比較して</div>
-        <div class="ai-msg ai-msg-bot">
-          先月比の分析結果です。
-          <div class="ai-report-mini">
-            <div class="ai-report-mini-row"><span>売上高</span><span style="color:#34d399;">+12.3%</span></div>
-            <div class="ai-report-mini-row"><span>売上原価</span><span style="color:#34d399;">-3.1%</span></div>
-            <div class="ai-report-mini-row"><span>販管費</span><span style="color:#f87171;">+5.8%</span></div>
-            <div class="ai-report-mini-row"><span>営業利益</span><span style="color:#34d399;">+18.7%</span></div>
+        <div class="demo-btn-area">
+          <button class="demo-btn demo-btn-pulse" id="demo-btn-1">CSVを取り込む →</button>
+          <span class="demo-btn-hint">ボタンを押してデモを体験</span>
+        </div>
+      </div>
+      <!-- Step 2: 自動照合 -->
+      <div class="demo-panel" data-step="2">
+        <div class="demo-progress-wrap">
+          <div class="demo-progress-header">
+            <span>自動照合中…</span>
+            <span id="demo-progress-pct">0%</span>
+          </div>
+          <div class="demo-progress-bar">
+            <div class="demo-progress-fill"></div>
           </div>
         </div>
-        <div class="ai-msg ai-msg-bot" style="background:transparent; padding:4px 16px;">
-          <div class="ai-typing"><span></span><span></span><span></span></div>
+        <div class="demo-log"></div>
+        <div class="demo-btn-area">
+          <button class="demo-btn demo-btn-pulse" id="demo-btn-2">自動照合を実行 →</button>
+          <span class="demo-btn-hint">ボタンを押して照合開始</span>
         </div>
+      </div>
+      <!-- Step 3: レポート完成 -->
+      <div class="demo-panel" data-step="3">
+        <div class="demo-kpis">
+          <div class="demo-kpi"><div class="demo-kpi-num green">936</div><div class="demo-kpi-label">照合済</div></div>
+          <div class="demo-kpi"><div class="demo-kpi-num yellow">63</div><div class="demo-kpi-label">要確認</div></div>
+          <div class="demo-kpi"><div class="demo-kpi-num red">19</div><div class="demo-kpi-label">未照合</div></div>
+        </div>
+        <table class="demo-table">
+          <thead><tr><th>摘要</th><th>勘定科目</th><th>金額</th><th>ステータス</th></tr></thead>
+          <tbody>
+            <tr><td>地代家賃</td><td>地代家賃</td><td>¥708,374</td><td><span class="demo-pill green">照合済</span></td></tr>
+            <tr><td>USEN BUSINESS</td><td>通信費</td><td>¥29,500</td><td><span class="demo-pill green">照合済</span></td></tr>
+            <tr><td>MHFカクヤス</td><td>仕入高</td><td>¥304,940</td><td><span class="demo-pill yellow">要確認</span></td></tr>
+            <tr><td>SMBC通信費</td><td>—</td><td>¥5,614</td><td><span class="demo-pill red">未照合</span></td></tr>
+          </tbody>
+        </table>
+        <div class="demo-insights">
+          <h4>AI インサイト</h4>
+          <ul>
+            <li>今月の照合率：92%（先月比 +8%）</li>
+            <li>未照合19件の主因：摘要名の表記ゆれ</li>
+            <li>定期支払を登録すると来月から自動照合率がさらに上がります</li>
+          </ul>
+        </div>
+        <button class="demo-btn-reset" id="demo-btn-reset">最初から</button>
       </div>
     </div>
   </div>
@@ -1959,8 +1936,14 @@
 
   function goTo(s){step=s;updateStepper(s);showPanel(s);}
 
+  function hideHint(panel){
+    var h=panel.querySelector('.demo-btn-hint');if(h)h.style.display='none';
+    var b=panel.querySelector('.demo-btn-pulse');if(b)b.classList.add('no-pulse');
+  }
+
   function runStep1(){
     if(running)return;running=true;
+    hideHint($('.demo-panel[data-step="1"]'));
     var btn=$('#demo-btn-1');btn.disabled=true;
     var dz=$('.demo-dropzone'),files=$$('.demo-fileitem'),banks=$$('.demo-bank');
     dz.classList.add('importing');
@@ -1983,6 +1966,7 @@
 
   function runStep2(){
     if(running)return;running=true;
+    hideHint($('.demo-panel[data-step="2"]'));
     var btn=$('#demo-btn-2');btn.disabled=true;
     var logs=[
       {tag:'SCAN',cls:'tag-scan',t:'mufg_2026_03.csv \u2014 612\u884C \u691C\u51FA'},
@@ -2025,18 +2009,36 @@
     $$('.demo-fileitem').forEach(function(f){f.classList.remove('show')});
     $$('.demo-bank').forEach(function(b){b.classList.remove('recognized')});
     var b1=$('#demo-btn-1');b1.textContent='CSV\u3092\u53D6\u308A\u8FBC\u3080 \u2192';b1.disabled=false;b1.onclick=runStep1;
+    b1.classList.remove('no-pulse');b1.classList.add('demo-btn-pulse');
+    var h1=$('.demo-panel[data-step="1"] .demo-btn-hint');if(h1)h1.style.display='';
     $('.demo-log').innerHTML='';
     $('.demo-progress-fill').style.width='0%';
     $('#demo-progress-pct').textContent='0%';
     var b2=$('#demo-btn-2');b2.textContent='\u81EA\u52D5\u7167\u5408\u3092\u5B9F\u884C \u2192';b2.disabled=false;b2.onclick=runStep2;
+    b2.classList.remove('no-pulse');b2.classList.add('demo-btn-pulse');
+    var h2=$('.demo-panel[data-step="2"] .demo-btn-hint');if(h2)h2.style.display='';
+    autoStarted=false;
     showPanel(1);
   }
 
+  var autoStarted=false;
   document.addEventListener('DOMContentLoaded',function(){
     $('#demo-btn-1').onclick=runStep1;
     $('#demo-btn-2').onclick=runStep2;
     $('#demo-btn-reset').onclick=resetDemo;
     goTo(1);
+    if('IntersectionObserver' in window){
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting&&!autoStarted&&!running&&step===1){
+            autoStarted=true;
+            setTimeout(runStep1,600);
+          }
+        });
+      },{threshold:0.4});
+      var target=$('#demo');
+      if(target)obs.observe(target);
+    }
   });
 })();
 </script>
