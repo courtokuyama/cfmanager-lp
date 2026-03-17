@@ -425,6 +425,50 @@
     border-bottom: 2px solid var(--accent); padding-bottom: 2px;
   }
   .screen-body { padding: 20px; color: rgba(255,255,255,0.6); }
+  .screen-tabs { display: flex; gap: 0; flex: 1; margin-left: 8px; }
+  .screen-tab-item {
+    font-size: 11px; color: rgba(255,255,255,0.35); padding: 4px 12px 6px;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+    user-select: none;
+  }
+  .screen-tab-item:hover { color: rgba(255,255,255,0.6); }
+  .screen-tab-item.active { color: rgba(255,255,255,0.8); border-bottom-color: var(--accent); }
+  .mock-tab-content { display: none; }
+  .mock-tab-content.active { display: block; animation: fadeUp 0.3s ease both; }
+  .mock-batch-row {
+    display: flex; align-items: center; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: rgba(255,255,255,0.5);
+  }
+  .mock-batch-row:last-child { border-bottom: none; }
+  .mock-badge {
+    font-size: 9px; padding: 2px 8px; border-radius: 100px; font-weight: 600;
+  }
+  .mock-badge.completed { background: rgba(52,211,153,0.15); color: #34d399; }
+  .mock-badge.review { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .mock-badge.pending { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+  .mock-badge.cancelled { background: rgba(248,113,113,0.15); color: #f87171; }
+  .mock-confidence-bar {
+    width: 48px; height: 4px; background: rgba(255,255,255,0.1);
+    border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px;
+  }
+  .mock-confidence-fill { height: 100%; border-radius: 2px; }
+  .mock-recurring-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; background: rgba(255,255,255,0.04);
+    border-radius: 8px; margin-bottom: 6px; font-size: 11px;
+  }
+  .mock-toggle {
+    width: 28px; height: 16px; border-radius: 8px; position: relative; flex-shrink: 0;
+  }
+  .mock-toggle.on { background: var(--accent); }
+  .mock-toggle.off { background: rgba(255,255,255,0.15); }
+  .mock-toggle::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    background: white; border-radius: 50%; top: 2px;
+  }
+  .mock-toggle.on::after { right: 2px; }
+  .mock-toggle.off::after { left: 2px; }
 
   .csv-drop {
     border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px;
@@ -1047,6 +1091,10 @@
     .demo-inner { padding-left: 20px; padding-right: 20px; }
     .demo-panel { padding: 20px; }
     .demo-dropzone { padding: 32px 20px; }
+    .screen-tabs { flex-wrap: wrap; gap: 2px; margin-left: 0; margin-top: 6px; }
+    .screen-tab-item { font-size: 10px; padding: 3px 8px 4px; }
+    #tab-dashboard > div:first-child { grid-template-columns: repeat(2,1fr) !important; }
+    #tab-dashboard > div:nth-child(2) { grid-template-columns: 1fr !important; }
   }
 </style>
 </head>
@@ -1660,86 +1708,262 @@
       <!-- Step 3: レポート完成 -->
       <div class="demo-panel" data-step="3">
         <div class="screen-mock">
-          <div class="screen-header">
+          <div class="screen-header" style="flex-wrap:wrap;">
             <div class="screen-dots"><span></span><span></span><span></span></div>
-            <div class="screen-tab">ダッシュボード — 2026年3月</div>
+            <div class="screen-tabs">
+              <div class="screen-tab-item active" onclick="switchMockTab(this,'tab-dashboard')">ダッシュボード</div>
+              <div class="screen-tab-item" onclick="switchMockTab(this,'tab-import')">インポート</div>
+              <div class="screen-tab-item" onclick="switchMockTab(this,'tab-match')">予実照合</div>
+              <div class="screen-tab-item" onclick="switchMockTab(this,'tab-recurring')">定期支払</div>
+            </div>
           </div>
           <div class="screen-body">
-            <!-- KPI row -->
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px;">
-              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.4);">当月売上</div>
-                <div style="font-size:18px; font-weight:700; color:#fff;">¥9,750,200</div>
-                <span style="font-size:9px; color:#34d399;">▲ 12.3%</span>
-              </div>
-              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.4);">当月支出</div>
-                <div style="font-size:18px; font-weight:700; color:#fff;">¥4,218,530</div>
-                <span style="font-size:9px; color:#34d399;">▼ 8.1%</span>
-              </div>
-              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.4);">営業利益</div>
-                <div style="font-size:18px; font-weight:700; color:var(--accent);">¥2,349,770</div>
-                <span style="font-size:9px; color:#34d399;">▲ 18.7%</span>
-              </div>
-              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.4);">照合率</div>
-                <div style="font-size:18px; font-weight:700; color:#34d399;">92.0%</div>
-                <span style="font-size:9px; color:#34d399;">+8% 先月比</span>
-              </div>
-            </div>
-            <!-- Chart + PL side by side -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">キャッシュフロー推移（6ヶ月）</div>
-                <div class="chart-bars" style="height:56px;">
-                  <div class="chart-bar" style="height:30%"></div>
-                  <div class="chart-bar" style="height:45%"></div>
-                  <div class="chart-bar" style="height:55%"></div>
-                  <div class="chart-bar" style="height:75%"></div>
-                  <div class="chart-bar" style="height:65%"></div>
-                  <div class="chart-bar" style="height:85%"></div>
-                  <div class="chart-bar" style="height:70%"></div>
-                  <div class="chart-bar" style="height:95%"></div>
+
+            <!-- ===== ダッシュボード TAB ===== -->
+            <div class="mock-tab-content active" id="tab-dashboard">
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px;">
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4);">入金実績</div>
+                  <div style="font-size:18px; font-weight:700; color:#fff;">¥15,581,739</div>
+                  <span style="font-size:9px; color:#34d399;">Q1 累計</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-size:8px; color:rgba(255,255,255,0.25); margin-top:4px;">
-                  <span>10月</span><span>11月</span><span>12月</span><span>1月</span><span>2月</span><span>3月</span>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4);">出金予測</div>
+                  <div style="font-size:18px; font-weight:700; color:#fff;">¥2,935,810</div>
+                  <span style="font-size:9px; color:#fbbf24;">予測値</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4);">Net CF</div>
+                  <div style="font-size:18px; font-weight:700; color:var(--accent);">¥6,169,894</div>
+                  <span style="font-size:9px; color:#34d399;">▲ 黒字</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4);">自動照合</div>
+                  <div style="font-size:18px; font-weight:700; color:#34d399;">43件</div>
+                  <span style="font-size:9px; color:rgba(255,255,255,0.35);">auto + review</span>
                 </div>
               </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">キャッシュフロー推移（6ヶ月）</div>
+                  <div class="chart-bars" style="height:56px;">
+                    <div class="chart-bar" style="height:35%"></div>
+                    <div class="chart-bar" style="height:50%"></div>
+                    <div class="chart-bar" style="height:60%"></div>
+                    <div class="chart-bar" style="height:72%"></div>
+                    <div class="chart-bar" style="height:68%"></div>
+                    <div class="chart-bar" style="height:95%"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:8px; color:rgba(255,255,255,0.25); margin-top:4px;">
+                    <span>10月</span><span>11月</span><span>12月</span><span>1月</span><span>2月</span><span>3月</span>
+                  </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">損益サマリ（予測ベース）</div>
+                  <div class="pl-row"><span class="pl-label">売上高</span><span class="pl-val">¥9,105,704</span></div>
+                  <div class="pl-row"><span class="pl-label">売上原価</span><span class="pl-val negative">¥-304,940</span></div>
+                  <div class="pl-row"><span class="pl-label">販管費</span><span class="pl-val negative">¥-2,630,870</span></div>
+                  <div class="pl-row total"><span>Net CF</span><span>¥6,169,894</span></div>
+                </div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; font-size:10px;">
+                <div style="display:flex; color:rgba(255,255,255,0.35); font-size:9px; font-weight:600; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:4px;">
+                  <span style="flex:2;">取引先</span><span style="flex:1;">勘定科目</span><span style="flex:1; text-align:right;">金額</span><span style="flex:0.8; text-align:right;">ステータス</span>
+                </div>
+                <div style="display:flex; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="flex:2;">USENPAY（BPO）</span><span style="flex:1;">売上高</span><span style="flex:1; text-align:right;">¥2,417,800</span><span style="flex:0.8; text-align:right; color:#fbbf24;">pending</span>
+                </div>
+                <div style="display:flex; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="flex:2;">家賃（MHF）</span><span style="flex:1;">地代家賃</span><span style="flex:1; text-align:right;">¥354,187</span><span style="flex:0.8; text-align:right; color:#fbbf24;">pending</span>
+                </div>
+                <div style="display:flex; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="flex:2;">カクヤス仕入</span><span style="flex:1;">仕入高</span><span style="flex:1; text-align:right;">¥304,940</span><span style="flex:0.8; text-align:right; color:#f87171;">cancelled</span>
+                </div>
+                <div style="display:flex; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <span style="flex:2;">W21 USEN BUSINESS</span><span style="flex:1;">売上高</span><span style="flex:1; text-align:right;">¥29,500</span><span style="flex:0.8; text-align:right; color:#fbbf24;">pending</span>
+                </div>
+                <div style="display:flex; color:rgba(255,255,255,0.5); padding:5px 0;">
+                  <span style="flex:2;">SMBC 通信費</span><span style="flex:1;">通信費</span><span style="flex:1; text-align:right;">¥5,614</span><span style="flex:0.8; text-align:right; color:#fbbf24;">pending</span>
+                </div>
+              </div>
+              <div style="margin-top:10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); border-radius:8px; padding:10px 14px; font-size:11px; color:rgba(255,255,255,0.7); display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--accent); font-weight:700;">AI</span>
+                Q1予測 Net CF +¥6.2M。地代家賃に2件重複の可能性あり。USENPAY（BPO）はexpenseタイプだが売上高カテゴリ — 要確認。
+              </div>
+            </div>
+
+            <!-- ===== インポート TAB ===== -->
+            <div class="mock-tab-content" id="tab-import">
+              <div style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:600; margin-bottom:10px;">インポート履歴</div>
               <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
-                <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">損益計算書（予実対比）</div>
-                <div class="pl-row"><span class="pl-label">売上高</span><span class="pl-val">¥9,750,200</span></div>
-                <div class="pl-row"><span class="pl-label">売上原価</span><span class="pl-val negative">¥-3,280,000</span></div>
-                <div class="pl-row"><span class="pl-label">販管費</span><span class="pl-val negative">¥-4,120,430</span></div>
-                <div class="pl-row total"><span>営業利益</span><span>¥2,349,770</span></div>
+                <div style="display:flex; color:rgba(255,255,255,0.3); font-size:9px; font-weight:600; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:2px;">
+                  <span style="flex:2;">ファイル名</span><span style="flex:0.7;">タイプ</span><span style="flex:0.5; text-align:right;">件数</span><span style="flex:0.7; text-align:right;">自動照合</span><span style="flex:0.8; text-align:right;">ステータス</span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:2; color:rgba(255,255,255,0.7);">入金予定_モウカル.csv</span>
+                  <span style="flex:0.7;"><span class="mock-badge" style="background:rgba(139,92,246,0.15); color:#a78bfa;">invoice</span></span>
+                  <span style="flex:0.5; text-align:right;">12</span>
+                  <span style="flex:0.7; text-align:right;">0</span>
+                  <span style="flex:0.8; text-align:right;"><span class="mock-badge completed">completed</span></span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:2; color:rgba(255,255,255,0.7);">出金実績.csv</span>
+                  <span style="flex:0.7;"><span class="mock-badge" style="background:rgba(37,99,235,0.15); color:#60a5fa;">bank</span></span>
+                  <span style="flex:0.5; text-align:right;">524</span>
+                  <span style="flex:0.7; text-align:right; color:#34d399;">31</span>
+                  <span style="flex:0.8; text-align:right;"><span class="mock-badge completed">completed</span></span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:2; color:rgba(255,255,255,0.7);">入金実績.csv</span>
+                  <span style="flex:0.7;"><span class="mock-badge" style="background:rgba(37,99,235,0.15); color:#60a5fa;">bank</span></span>
+                  <span style="flex:0.5; text-align:right;">172</span>
+                  <span style="flex:0.7; text-align:right; color:#34d399;">12</span>
+                  <span style="flex:0.8; text-align:right;"><span class="mock-badge completed">completed</span></span>
+                </div>
+              </div>
+              <div style="margin-top:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px; text-align:center;">
+                  <div style="font-size:22px; font-weight:700; color:#fff;">708</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">総レコード数</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px; text-align:center;">
+                  <div style="font-size:22px; font-weight:700; color:#34d399;">43</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">自動照合済</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px; text-align:center;">
+                  <div style="font-size:22px; font-weight:700; color:var(--accent);">3</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">ファイル数</div>
+                </div>
               </div>
             </div>
-            <!-- Transaction list -->
-            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; font-size:10px;">
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.35); font-size:9px; font-weight:600; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:4px;">
-                <span style="flex:2;">摘要</span><span style="flex:1;">勘定科目</span><span style="flex:1; text-align:right;">金額</span><span style="flex:1; text-align:right;">ステータス</span>
+
+            <!-- ===== 予実照合 TAB ===== -->
+            <div class="mock-tab-content" id="tab-match">
+              <div style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:600; margin-bottom:10px;">マッチング結果</div>
+              <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;">
+                <div style="background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.15); border-radius:8px; padding:12px; text-align:center;">
+                  <div style="font-size:20px; font-weight:700; color:#34d399;">31</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">auto_matched</div>
+                </div>
+                <div style="background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.15); border-radius:8px; padding:12px; text-align:center;">
+                  <div style="font-size:20px; font-weight:700; color:#fbbf24;">10</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">review</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; text-align:center;">
+                  <div style="font-size:20px; font-weight:700; color:rgba(255,255,255,0.5);">665</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">unmatched</div>
+                </div>
               </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <span style="flex:2;">地代家賃</span><span style="flex:1;">地代家賃</span><span style="flex:1; text-align:right;">¥708,374</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
+                <div style="display:flex; color:rgba(255,255,255,0.3); font-size:9px; font-weight:600; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:2px;">
+                  <span style="flex:1.5;">予測</span><span style="flex:1.5;">実績</span><span style="flex:1; text-align:right;">信頼度</span><span style="flex:0.7; text-align:right;">状態</span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">家賃 ¥354,187</span>
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">家賃振込 ¥354,187</span>
+                  <span style="flex:1; text-align:right;"><span class="mock-confidence-bar"><span class="mock-confidence-fill" style="width:79%; background:#34d399;"></span></span><span style="font-size:10px; color:#34d399;">0.79</span></span>
+                  <span style="flex:0.7; text-align:right;"><span class="mock-badge review">review</span></span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">SMBC通信費 ¥5,614</span>
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">SMBC振替 ¥5,614</span>
+                  <span style="flex:1; text-align:right;"><span class="mock-confidence-bar"><span class="mock-confidence-fill" style="width:75%; background:#34d399;"></span></span><span style="font-size:10px; color:#34d399;">0.75</span></span>
+                  <span style="flex:0.7; text-align:right;"><span class="mock-badge review">review</span></span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">USENPAY ¥2,417,800</span>
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">USEN入金 ¥2,385,000</span>
+                  <span style="flex:1; text-align:right;"><span class="mock-confidence-bar"><span class="mock-confidence-fill" style="width:71%; background:#fbbf24;"></span></span><span style="font-size:10px; color:#fbbf24;">0.71</span></span>
+                  <span style="flex:0.7; text-align:right;"><span class="mock-badge review">review</span></span>
+                </div>
+                <div class="mock-batch-row">
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">税理士報酬 ¥22,000</span>
+                  <span style="flex:1.5; color:rgba(255,255,255,0.6);">口座振替 ¥22,000</span>
+                  <span style="flex:1; text-align:right;"><span class="mock-confidence-bar"><span class="mock-confidence-fill" style="width:51%; background:#fbbf24;"></span></span><span style="font-size:10px; color:#fbbf24;">0.51</span></span>
+                  <span style="flex:0.7; text-align:right;"><span class="mock-badge review">review</span></span>
+                </div>
               </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <span style="flex:2;">USEN BUSINESS</span><span style="flex:1;">通信費</span><span style="flex:1; text-align:right;">¥29,500</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <span style="flex:2;">給与振込</span><span style="flex:1;">給与手当</span><span style="flex:1; text-align:right;">¥3,240,000</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <span style="flex:2;">MHFカクヤス</span><span style="flex:1;">仕入高</span><span style="flex:1; text-align:right;">¥304,940</span><span style="flex:1; text-align:right; color:#fbbf24;">要確認</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0;">
-                <span style="flex:2;">楽天カード</span><span style="flex:1;">消耗品費</span><span style="flex:1; text-align:right;">¥128,400</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              <div style="margin-top:10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); border-radius:8px; padding:10px 14px; font-size:11px; color:rgba(255,255,255,0.7); display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--accent); font-weight:700;">AI</span>
+                payeeスコア 1.0 / dateスコア低め — 日付ずれは銀行処理日の差異が原因と推定。確認ボタンで一括承認可能です。
               </div>
             </div>
-            <!-- AI insight bar -->
-            <div style="margin-top:10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); border-radius:8px; padding:10px 14px; font-size:11px; color:rgba(255,255,255,0.7); display:flex; align-items:center; gap:8px;">
-              <span style="color:var(--accent); font-weight:700;">AI</span>
-              今月の営業利益は前月比+18.7%。販管費の伸び（+5.8%）を売上増がカバー。来月のCF予測: ¥8.2M黒字見込。
+
+            <!-- ===== 定期支払 TAB ===== -->
+            <div class="mock-tab-content" id="tab-recurring">
+              <div style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:600; margin-bottom:10px;">定期支払パターン</div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">USENPAY（BPO）</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">売上高 ・ 毎月 31日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥2,417,800</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">家賃（MHF）</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">地代家賃 ・ 毎月 26日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥354,187</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">カクヤス仕入</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">仕入高 ・ 毎月 1日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥304,940</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">ZENRYOKU 外注費</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">外注費 ・ 毎月 30日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:rgba(255,255,255,0.3); font-weight:700; text-decoration:line-through;">¥300,000</span>
+                  <div class="mock-toggle off"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">W21 USEN BUSINESS</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">売上高 ・ 毎月 28日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥29,500</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">SMBC 通信費</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">通信費 ・ 毎月 27日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥5,614</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
+              <div class="mock-recurring-row">
+                <div>
+                  <div style="color:rgba(255,255,255,0.7); font-weight:600;">税理士報酬</div>
+                  <div style="font-size:9px; color:rgba(255,255,255,0.35);">支払報酬料 ・ 毎月 28日</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="color:var(--accent); font-weight:700;">¥22,000</span>
+                  <div class="mock-toggle on"></div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
         <button class="demo-btn-reset" id="demo-btn-reset">最初から</button>
@@ -2100,6 +2324,13 @@
     showPanel(1);
     showWaiting();
   }
+
+  window.switchMockTab=function(el,tabId){
+    el.parentElement.querySelectorAll('.screen-tab-item').forEach(function(t){t.classList.remove('active')});
+    el.classList.add('active');
+    el.closest('.screen-mock').querySelectorAll('.mock-tab-content').forEach(function(c){c.classList.remove('active')});
+    document.getElementById(tabId).classList.add('active');
+  };
 
   var autoStarted=false;
   document.addEventListener('DOMContentLoaded',function(){
