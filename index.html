@@ -1659,27 +1659,88 @@
       </div>
       <!-- Step 3: レポート完成 -->
       <div class="demo-panel" data-step="3">
-        <div class="demo-kpis">
-          <div class="demo-kpi"><div class="demo-kpi-num green">936</div><div class="demo-kpi-label">照合済</div></div>
-          <div class="demo-kpi"><div class="demo-kpi-num yellow">63</div><div class="demo-kpi-label">要確認</div></div>
-          <div class="demo-kpi"><div class="demo-kpi-num red">19</div><div class="demo-kpi-label">未照合</div></div>
-        </div>
-        <table class="demo-table">
-          <thead><tr><th>摘要</th><th>勘定科目</th><th>金額</th><th>ステータス</th></tr></thead>
-          <tbody>
-            <tr><td>地代家賃</td><td>地代家賃</td><td>¥708,374</td><td><span class="demo-pill green">照合済</span></td></tr>
-            <tr><td>USEN BUSINESS</td><td>通信費</td><td>¥29,500</td><td><span class="demo-pill green">照合済</span></td></tr>
-            <tr><td>MHFカクヤス</td><td>仕入高</td><td>¥304,940</td><td><span class="demo-pill yellow">要確認</span></td></tr>
-            <tr><td>SMBC通信費</td><td>—</td><td>¥5,614</td><td><span class="demo-pill red">未照合</span></td></tr>
-          </tbody>
-        </table>
-        <div class="demo-insights">
-          <h4>AI インサイト</h4>
-          <ul>
-            <li>今月の照合率：92%（先月比 +8%）</li>
-            <li>未照合19件の主因：摘要名の表記ゆれ</li>
-            <li>定期支払を登録すると来月から自動照合率がさらに上がります</li>
-          </ul>
+        <div class="screen-mock">
+          <div class="screen-header">
+            <div class="screen-dots"><span></span><span></span><span></span></div>
+            <div class="screen-tab">ダッシュボード — 2026年3月</div>
+          </div>
+          <div class="screen-body">
+            <!-- KPI row -->
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px;">
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.4);">当月売上</div>
+                <div style="font-size:18px; font-weight:700; color:#fff;">¥9,750,200</div>
+                <span style="font-size:9px; color:#34d399;">▲ 12.3%</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.4);">当月支出</div>
+                <div style="font-size:18px; font-weight:700; color:#fff;">¥4,218,530</div>
+                <span style="font-size:9px; color:#34d399;">▼ 8.1%</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.4);">営業利益</div>
+                <div style="font-size:18px; font-weight:700; color:var(--accent);">¥2,349,770</div>
+                <span style="font-size:9px; color:#34d399;">▲ 18.7%</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.4);">照合率</div>
+                <div style="font-size:18px; font-weight:700; color:#34d399;">92.0%</div>
+                <span style="font-size:9px; color:#34d399;">+8% 先月比</span>
+              </div>
+            </div>
+            <!-- Chart + PL side by side -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">キャッシュフロー推移（6ヶ月）</div>
+                <div class="chart-bars" style="height:56px;">
+                  <div class="chart-bar" style="height:30%"></div>
+                  <div class="chart-bar" style="height:45%"></div>
+                  <div class="chart-bar" style="height:55%"></div>
+                  <div class="chart-bar" style="height:75%"></div>
+                  <div class="chart-bar" style="height:65%"></div>
+                  <div class="chart-bar" style="height:85%"></div>
+                  <div class="chart-bar" style="height:70%"></div>
+                  <div class="chart-bar" style="height:95%"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:8px; color:rgba(255,255,255,0.25); margin-top:4px;">
+                  <span>10月</span><span>11月</span><span>12月</span><span>1月</span><span>2月</span><span>3月</span>
+                </div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px;">
+                <div style="font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:8px;">損益計算書（予実対比）</div>
+                <div class="pl-row"><span class="pl-label">売上高</span><span class="pl-val">¥9,750,200</span></div>
+                <div class="pl-row"><span class="pl-label">売上原価</span><span class="pl-val negative">¥-3,280,000</span></div>
+                <div class="pl-row"><span class="pl-label">販管費</span><span class="pl-val negative">¥-4,120,430</span></div>
+                <div class="pl-row total"><span>営業利益</span><span>¥2,349,770</span></div>
+              </div>
+            </div>
+            <!-- Transaction list -->
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; font-size:10px;">
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.35); font-size:9px; font-weight:600; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:4px;">
+                <span style="flex:2;">摘要</span><span style="flex:1;">勘定科目</span><span style="flex:1; text-align:right;">金額</span><span style="flex:1; text-align:right;">ステータス</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span style="flex:2;">地代家賃</span><span style="flex:1;">地代家賃</span><span style="flex:1; text-align:right;">¥708,374</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span style="flex:2;">USEN BUSINESS</span><span style="flex:1;">通信費</span><span style="flex:1; text-align:right;">¥29,500</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span style="flex:2;">給与振込</span><span style="flex:1;">給与手当</span><span style="flex:1; text-align:right;">¥3,240,000</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span style="flex:2;">MHFカクヤス</span><span style="flex:1;">仕入高</span><span style="flex:1; text-align:right;">¥304,940</span><span style="flex:1; text-align:right; color:#fbbf24;">要確認</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.5); padding:5px 0;">
+                <span style="flex:2;">楽天カード</span><span style="flex:1;">消耗品費</span><span style="flex:1; text-align:right;">¥128,400</span><span style="flex:1; text-align:right; color:#34d399;">照合済</span>
+              </div>
+            </div>
+            <!-- AI insight bar -->
+            <div style="margin-top:10px; background:rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.2); border-radius:8px; padding:10px 14px; font-size:11px; color:rgba(255,255,255,0.7); display:flex; align-items:center; gap:8px;">
+              <span style="color:var(--accent); font-weight:700;">AI</span>
+              今月の営業利益は前月比+18.7%。販管費の伸び（+5.8%）を売上増がカバー。来月のCF予測: ¥8.2M黒字見込。
+            </div>
+          </div>
         </div>
         <button class="demo-btn-reset" id="demo-btn-reset">最初から</button>
       </div>
