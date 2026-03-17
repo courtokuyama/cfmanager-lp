@@ -1021,8 +1021,8 @@
     animation: none;
   }
   @keyframes btnGlow {
-    0%, 100% { box-shadow: 0 4px 20px rgba(37,99,235,0.3); }
-    50% { box-shadow: 0 4px 32px rgba(37,99,235,0.6); }
+    0%, 100% { box-shadow: 0 4px 20px rgba(37,99,235,0.3); opacity: 1; }
+    50% { box-shadow: 0 4px 32px rgba(37,99,235,0.6); opacity: 0.5; }
   }
   .demo-box.waiting .demo-stepper { opacity: 0.2; transition: opacity 0.4s; }
   .demo-box.waiting .demo-panel > *:not(.demo-btn-area) { opacity: 0.12; transition: opacity 0.4s; }
@@ -1943,6 +1943,7 @@
   function goTo(s){
     step=s;updateStepper(s);showPanel(s);
     if(s<3&&!running){showWaiting();}
+    else{var box=$('.demo-box');if(box)box.classList.remove('waiting');}
   }
 
   function hideHint(panel){
