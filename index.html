@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="銀行明細CSVを取り込むだけ。予実照合・PL分析・キャッシュフロー予測が5分で自動完結。freee・マネフォには一切触れない、経理部のための安全な分析ツール。">
+<meta name="description" content="freee・マネフォからAPI自動取得＋CSV対応。予実照合・PL分析・CF予測をAIが自動生成。公式の数字に影響しない、好きにいじれる経理AI分析ツール。">
 <meta property="og:title" content="CFManager — 経理をAIで次のステージへ">
-<meta property="og:description" content="銀行明細CSVを取り込むだけ。予実照合・PL分析・CF予測が5分で自動完結。freee・マネフォに一切触れない安全設計。">
+<meta property="og:description" content="freee・マネフォからAPI自動取得。予実照合・PL分析・CF予測をAIが即座に生成。公式データに影響しない安全設計。">
 <meta property="og:type" content="website">
 <title>CFManager — 経理をAIで次のステージへ</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='16' width='100' height='100' fill='%232563eb'/><text x='50' y='68' text-anchor='middle' font-size='52' font-weight='bold' fill='white'>CF</text></svg>">
@@ -660,6 +660,105 @@
     font-size: 12px; text-align: center;
   }
 
+  /* ─── PAIN POINTS ─── */
+  .pain-section { background: var(--bg); border-top: 1px solid var(--border); }
+  .pain-inner { max-width: var(--max-w); margin: 0 auto; padding: 96px 40px; }
+  .pain-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+  }
+  .pain-inner h2 {
+    font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+    margin-bottom: 48px; text-wrap: balance;
+  }
+  .pain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .pain-card {
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: var(--radius-lg); padding: 32px;
+  }
+  .pain-card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: #fee2e2; display: flex;
+    align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .pain-card-icon svg { width: 24px; height: 24px; }
+  .pain-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; line-height: 1.6; }
+  .pain-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; }
+
+  /* ─── AI REPORT DEMO ─── */
+  .ai-demo-section { background: var(--bg-dark); border-top: 1px solid var(--border); }
+  .ai-demo-inner {
+    max-width: 1200px; margin: 0 auto; padding: 96px 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+  }
+  .ai-demo-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .ai-demo-inner h3 {
+    font-size: clamp(22px, 2.5vw, 28px); font-weight: 700;
+    line-height: 1.45; margin-bottom: 16px; color: #fff; text-wrap: balance;
+  }
+  .ai-demo-text {
+    font-size: 15px; color: rgba(255,255,255,0.5); line-height: 2; margin-bottom: 24px;
+  }
+  .ai-demo-features {
+    list-style: none; display: flex; flex-direction: column; gap: 12px;
+  }
+  .ai-demo-features li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: rgba(255,255,255,0.7);
+  }
+  .ai-demo-check {
+    width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center;
+  }
+  .ai-demo-check svg { width: 12px; height: 12px; }
+  .ai-chat-mock {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .ai-chat-header {
+    padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: rgba(255,255,255,0.5);
+  }
+  .ai-chat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .ai-chat-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .ai-msg {
+    max-width: 85%; padding: 12px 16px; border-radius: 12px;
+    font-size: 13px; line-height: 1.7;
+  }
+  .ai-msg-user {
+    align-self: flex-end; background: var(--accent);
+    color: #fff; border-bottom-right-radius: 4px;
+  }
+  .ai-msg-bot {
+    align-self: flex-start; background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.8); border-bottom-left-radius: 4px;
+  }
+  .ai-report-mini { margin-top: 10px; width: 100%; font-size: 11px; }
+  .ai-report-mini-row {
+    display: flex; justify-content: space-between; padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .ai-report-mini-row:last-child { border-bottom: none; font-weight: 700; color: var(--accent); }
+  .ai-typing {
+    display: inline-flex; gap: 4px; padding: 4px 0;
+  }
+  .ai-typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    animation: typingDot 1.4s infinite;
+  }
+  .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingDot {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-4px); }
+  }
+
   /* ─── ANIMATIONS ─── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -732,7 +831,9 @@
     .form-visual-header { text-align: center; }
     .points-overview, .point-detail, .who-section, .faq-inner,
     .message-inner, .form-inner, .mid-cta, .metrics-inner,
-    .ba-inner { padding-left: 20px; padding-right: 20px; }
+    .ba-inner, .pain-inner, .ai-demo-inner { padding-left: 20px; padding-right: 20px; }
+    .pain-cards { grid-template-columns: 1fr; }
+    .ai-demo-inner { grid-template-columns: 1fr; gap: 40px; }
   }
 </style>
 </head>
@@ -746,11 +847,12 @@
       <div class="nav-item has-dropdown">
         サービス紹介
         <div class="nav-dropdown">
-          <a href="#point-01">CSVインポート・自動分類</a>
+          <a href="#point-01">CSV・APIデータ取込</a>
           <a href="#point-02">AI自動照合</a>
           <a href="#point-03">PL分析・予実比較</a>
           <a href="#point-04">定期支払・CF予測</a>
-          <a href="#point-05">安全設計・セキュリティ</a>
+          <a href="#point-05">安全設計</a>
+          <a href="#ai-report">AIレポート生成</a>
         </div>
       </div>
       <a class="nav-item" href="#metrics">導入効果</a>
@@ -773,9 +875,9 @@
     <div class="hero-badge">経理AI自動化 SaaS</div>
     <h1 class="hero-title">経理をAIで<br>次のステージへ</h1>
     <p class="hero-sub">
-      銀行明細CSVをドラッグするだけ。<br>
-      照合・PL作成・CF予測が<strong style="color:var(--accent);">5分で自動完結</strong>。<br>
-      freee・マネフォには一切触れない安全設計。
+      freee・マネフォから<strong style="color:var(--accent);">読み取り専用API</strong>で自動取得。CSVインポートにも対応。<br>
+      好きに分析・加工しても、公式の数字には一切影響なし。<br>
+      AIが必要なレポートを<strong style="color:var(--accent);">即座に自動生成</strong>します。
     </p>
     <div class="hero-actions">
       <a href="#contact-form" class="hero-cta-primary">資料請求（無料） →</a>
@@ -784,7 +886,7 @@
     <div class="hero-trust">
       <div class="hero-trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        会計ソフト非接続
+        公式データ影響ゼロ
       </div>
       <div class="hero-trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -892,6 +994,37 @@
   </div><!-- /hero-inner -->
 </div>
 
+<!-- PAIN POINTS -->
+<div class="pain-section">
+  <div class="pain-inner">
+    <div class="pain-label">Common Problems</div>
+    <h2>こんなお悩みありませんか？</h2>
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="pain-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h3>freee・マネフォを使っているのに、結局スプレッドシートで管理している</h3>
+        <p>決算や大事な数字をうっかりいじってしまうリスクがあるから、会計ソフトの数字を直接触れない。結局スプレッドシートにエクスポートして手作業で分析している。</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>欲しい数字やレポートをすぐに出せない</h3>
+        <p>「今月のPLを見せて」「先月との比較は？」——簡単な質問にも、毎回データを引っ張り出して集計し直す手間がかかっている。</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3>会計ソフトは「触れない聖域」になっている</h3>
+        <p>税理士が使うデータだから、うかつに触れない。分析のために数字を加工したいのに、会計ソフト上では怖くてできない。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- BEFORE / AFTER -->
 <div class="ba-section">
   <div class="ba-inner">
@@ -968,12 +1101,12 @@
           <div class="ba-step-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          CSV取込のみ。公式ソフトに非接続
+          読み取り専用API＋CSV。公式データに影響ゼロ
         </div>
       </div>
     </div>
     <div class="ba-bottom-note">
-      CSVをドラッグするだけで、<strong>経理業務を92%自動化</strong>できます。
+      API自動取得とCSVインポートで、<strong>経理業務を92%自動化</strong>。AIが必要なレポートを即座に生成します。
     </div>
   </div>
 </div>
@@ -985,7 +1118,7 @@
   <div class="points-grid">
     <a href="#point-01" class="point-card">
       <div class="point-num">01</div>
-      <h3>CSVインポートで即座にデータ取込</h3>
+      <h3>CSV・APIで即座にデータ取込</h3>
       <div class="point-arrow">→</div>
     </a>
     <a href="#point-02" class="point-card">
@@ -1005,7 +1138,7 @@
     </a>
     <a href="#point-05" class="point-card">
       <div class="point-num">05</div>
-      <h3>公式会計ソフトに一切触れない安全設計</h3>
+      <h3>好きにいじっても公式の数字に影響しない</h3>
       <div class="point-arrow">→</div>
     </a>
   </div>
@@ -1016,12 +1149,12 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 01</div>
-      <h3>ドラッグ＆ドロップで<br>CSVを即座に取込</h3>
+      <h3>CSV＋APIで<br>データを即座に取込</h3>
       <p>
-        銀行口座・クレジットカードの明細CSVをドラッグするだけ。<br>
-        AIがフォーマットを自動判定し、勘定科目を分類。<br>
-        freee・マネフォに一切アクセスしないため、<br>
-        データ破損のリスクがゼロです。
+        銀行口座・クレジットカードのCSVインポートに加え、<br>
+        freee・マネフォからAPIで自動取得にも対応。<br>
+        読み取り専用のため公式データには一切影響なし。<br>
+        AIがフォーマットを自動判定し、勘定科目を分類します。
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
     </div>
@@ -1037,8 +1170,8 @@
         </div>
         <div style="display:flex; gap:8px;">
           <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
-            <div style="color:var(--accent); font-size:12px;">口座明細</div>
-            <div style="color:rgba(255,255,255,0.3); font-size:10px;">取込種別</div>
+            <div style="color:var(--accent); font-size:12px;">CSV / API</div>
+            <div style="color:rgba(255,255,255,0.3); font-size:10px;">取込方法</div>
           </div>
           <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:10px;">
             <div style="color:var(--accent); font-size:12px;">自動判定</div>
@@ -1189,11 +1322,11 @@
   <div class="point-detail-inner">
     <div>
       <div class="point-detail-num">POINT 05</div>
-      <h3>公式会計ソフトに一切触れない<br>安全設計</h3>
+      <h3>好きにいじっても<br>公式の数字に影響しない</h3>
       <p>
-        CFManagerはfreee・マネーフォワードの「外側」で動きます。<br>
-        CSVのみを取り込む設計のため、<br>
-        公式会計ソフトのデータに一切接触しません。<br>
+        freee・マネーフォワードから読み取り専用APIでデータを自動取得。<br>
+        書き込みは一切行わないため、公式の数字には影響しません。<br>
+        CFManager上で好きに分析・加工しても、<br>
         税理士が使う環境を壊す心配がゼロです。
       </p>
       <a href="#contact-form" class="point-detail-link">詳しく見る →</a>
@@ -1205,12 +1338,12 @@
           <div style="font-size:15px; font-weight:600;">freee / マネフォ</div>
         </div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          <div style="font-size:10px; color:var(--red); font-weight:600;">非接続</div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <div style="font-size:10px; color:var(--accent); font-weight:600;">読み取り専用API</div>
         </div>
         <div style="background:#fff; border-radius:12px; padding:20px 28px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid var(--border);">
           <div style="font-size:12px; color:var(--text-light); margin-bottom:4px;">CFManager</div>
-          <div style="font-size:15px; font-weight:600; color:var(--accent);">CSV取込のみ</div>
+          <div style="font-size:15px; font-weight:600; color:var(--accent);">自由に分析・加工</div>
         </div>
       </div>
       <div style="display:flex; gap:16px;">
@@ -1220,11 +1353,62 @@
         </div>
         <div style="background:#fff; border-radius:100px; padding:8px 20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:6px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          API接続なし
+          書き込み一切なし
         </div>
         <div style="background:#fff; border-radius:100px; padding:8px 20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:6px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           読み取り専用設計
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI REPORT DEMO -->
+<div class="ai-demo-section" id="ai-report">
+  <div class="ai-demo-inner">
+    <div>
+      <div class="ai-demo-label">AI Report</div>
+      <h3>AIに聞くだけで<br>必要なレポートが即座に出てくる</h3>
+      <p class="ai-demo-text">
+        外部AIと接続し、チャットで指示するだけで<br>
+        必要な数字・レポートを瞬時に生成。<br>
+        完全にAIが作業を代行します。
+      </p>
+      <ul class="ai-demo-features">
+        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「今月のPL出して」→ 即座に損益計算書を生成</li>
+        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「先月との差異を分析して」→ 比較レポートを自動作成</li>
+        <li><span class="ai-demo-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>「来月のCF予測を出して」→ キャッシュフロー予測を表示</li>
+      </ul>
+    </div>
+    <div class="ai-chat-mock">
+      <div class="ai-chat-header">
+        <div class="ai-chat-dot"></div>
+        CFManager AI — オンライン
+      </div>
+      <div class="ai-chat-body">
+        <div class="ai-msg ai-msg-user">今月のPLを出して</div>
+        <div class="ai-msg ai-msg-bot">
+          今月の損益計算書を生成しました。
+          <div class="ai-report-mini">
+            <div class="ai-report-mini-row"><span>売上高</span><span>¥9,750,200</span></div>
+            <div class="ai-report-mini-row"><span>売上原価</span><span>¥-3,280,000</span></div>
+            <div class="ai-report-mini-row"><span>販管費</span><span>¥-4,120,430</span></div>
+            <div class="ai-report-mini-row"><span>営業利益</span><span>¥2,349,770</span></div>
+          </div>
+        </div>
+        <div class="ai-msg ai-msg-user">先月と比較して</div>
+        <div class="ai-msg ai-msg-bot">
+          先月比の分析結果です。
+          <div class="ai-report-mini">
+            <div class="ai-report-mini-row"><span>売上高</span><span style="color:#34d399;">+12.3%</span></div>
+            <div class="ai-report-mini-row"><span>売上原価</span><span style="color:#34d399;">-3.1%</span></div>
+            <div class="ai-report-mini-row"><span>販管費</span><span style="color:#f87171;">+5.8%</span></div>
+            <div class="ai-report-mini-row"><span>営業利益</span><span style="color:#34d399;">+18.7%</span></div>
+          </div>
+        </div>
+        <div class="ai-msg ai-msg-bot" style="background:transparent; padding:4px 16px;">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
         </div>
       </div>
     </div>
@@ -1322,7 +1506,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">freee・マネーフォワードと連携しますか？</div>
-        <div class="faq-a">いいえ、連携しません。CFManagerは銀行・クレカの口座明細CSVを取り込む設計です。公式会計ソフトのAPIやデータには一切アクセスしないため、既存の会計環境を壊す心配が全くありません。</div>
+        <div class="faq-a">はい、読み取り専用APIで連携します。freee・マネーフォワードからデータを自動取得しますが、書き込みは一切行いません。公式の数字に影響を与えることなく、CFManager上で自由に分析・加工できます。CSVインポートにも対応しています。</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">どんな銀行・カードのCSVに対応していますか？</div>
@@ -1330,7 +1514,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q">セキュリティ面は大丈夫ですか？</div>
-        <div class="faq-a">データは暗号化して保存されます。CSVのみを取り込む設計のため、銀行口座への直接アクセスや公式会計ソフトへのアクセスは行いません。社内の重要データに接触する面積を最小化しています。</div>
+        <div class="faq-a">データは暗号化して保存されます。freee・マネフォとは読み取り専用APIのみで接続し、書き込みは一切行いません。公式会計ソフトのデータを変更・削除する機能は存在しないため、安全にご利用いただけます。</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">導入にシステム知識は必要ですか？</div>
@@ -1429,12 +1613,12 @@
   <div class="footer-inner">
     <div>
       <div class="footer-logo"><span>CF</span><span>Manager</span></div>
-      <p class="footer-desc">銀行明細CSVを取り込むだけで、経理のあらゆる業務をシンプルにする経理AI自動化SaaS。</p>
+      <p class="footer-desc">freee・マネフォからAPI自動取得。AIが即座にレポートを生成する、好きにいじれる経理AI分析ツール。</p>
     </div>
     <div class="footer-links">
       <div class="footer-col">
         <h4>サービス</h4>
-        <a href="#point-01">CSVインポート</a>
+        <a href="#point-01">CSV・APIデータ取込</a>
         <a href="#point-02">AI自動照合</a>
         <a href="#point-03">PL分析</a>
         <a href="#point-04">CF予測</a>
